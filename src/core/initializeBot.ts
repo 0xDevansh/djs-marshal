@@ -1,10 +1,11 @@
 import { Client } from 'discord.js';
 import { MarshalOptions } from '../structures/MarshalOptions';
+import { handleInteraction } from './handlers/handleInteraction';
 
 export const initializeBot = (options: MarshalOptions): Client => {
   const client = new Client(options);
 
-  // TODO register interaction event here
+  client.on('interactionCreate', handleInteraction);
 
   client.on('ready', () => {
     if (options.readyMessage) {
