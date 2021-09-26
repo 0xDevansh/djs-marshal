@@ -8,6 +8,4 @@ export interface GuildSlashCommand extends GlobalSlashCommand {
   guildId: Snowflake;
 }
 
-type SlashCommandData = GlobalSlashCommand | GuildSlashCommand;
-
-export class SlashCommand implements SlashCommandData {}
+export type SlashCommand = GlobalSlashCommand | GuildSlashCommand;

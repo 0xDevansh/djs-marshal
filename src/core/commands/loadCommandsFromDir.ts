@@ -15,7 +15,7 @@ export const loadCommandsFromDir = async (client: Client, dir: string) => {
 
   for (const file of files) {
     const exported = await import(path.join(dir, file));
-    if (exported.default instanceof SlashCommand) commands.push(exported.default);
+    commands.push(exported.default as SlashCommand);
   }
 
   loadCommands(client, commands);

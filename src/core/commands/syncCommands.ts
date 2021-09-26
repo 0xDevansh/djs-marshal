@@ -7,13 +7,14 @@ import { SlashCommand } from '../../structures/SlashCommand';
  * @param client The bot's client
  */
 export const syncCommands = async (commands: Collection<Snowflake | 'global', Array<SlashCommand>>, client: Client) => {
-  if (!client.application?.partial) await client.application?.fetch();
+  if (client.application?.partial) await client.application?.fetch();
   // sync global commands
   const global = commands.get('global');
-  if (global?.length) await client.application?.commands.set(global);
+  if (global !== undefined) await client.application?.commands.set(global);
   // sync guild commands
-  for (let [guildId, guildCommands] of commands) {
-    if (!guildCommands.length) return;
+  for (const [guildId, guildCommands] of commands) {
+    if (guildId === 'global') return;
     await client.application?.commands.set(guildCommands, guildId);
   }
+  console.log('synced commands with Discord');
 };

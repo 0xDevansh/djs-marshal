@@ -1,5 +1,6 @@
 import { SlashCommand } from '../../structures/SlashCommand';
 import { Client, Collection, Snowflake } from 'discord.js';
+import { syncCommands } from './syncCommands';
 
 /**
  * Load SlashCommands and store them as client.commands
@@ -15,11 +16,14 @@ export const loadCommands = (client: Client, commands: Array<SlashCommand>) => {
     if ('guildId' in command && command.guildId) {
       if (commandsCollection.get(command.guildId)) commandsCollection.get(command.guildId)?.push(command);
       else commandsCollection.set(command.guildId, [command]);
+      console.log(`Loaded command ${command.name}`);
       return;
     }
     // is global command
     commandsCollection.get('global')?.push(command);
+    console.log(`Loaded command ${command.name}`);
   });
 
   client.commands = commandsCollection;
+  syncCommands(client.commands, client);
 };
