@@ -7,7 +7,7 @@ import { syncCommands } from './syncCommands';
  * @param client The bot's Client
  * @param commands The array of SlashCommands to load
  */
-export const loadCommands = (client: Client, commands: Array<SlashCommand>) => {
+export const loadCommands = (client: Client, commands: Array<SlashCommand>): void => {
   const commandsCollection = new Collection<Snowflake | 'global', Array<SlashCommand>>();
 
   commandsCollection.set('global', []);

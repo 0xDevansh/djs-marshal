@@ -6,7 +6,10 @@ import { SlashCommand } from '../../structures/SlashCommand';
  * @param commands The commands to sync
  * @param client The bot's client
  */
-export const syncCommands = async (commands: Collection<Snowflake | 'global', Array<SlashCommand>>, client: Client) => {
+export const syncCommands = async (
+  commands: Collection<Snowflake | 'global', Array<SlashCommand>>,
+  client: Client,
+): Promise<void> => {
   if (client.application?.partial) await client.application?.fetch();
   // sync global commands
   const global = commands.get('global');

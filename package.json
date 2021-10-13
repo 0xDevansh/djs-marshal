@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc",
     "test": "node dist/testing/test.js",
-    "dev": "tsc -W"
+    "dev": "tsc -W",
+    "lint": "eslint src/** --fix"
   },
   "peerDependencies": {
     "discord.js": "13.x"
