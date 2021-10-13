@@ -1,7 +1,8 @@
 import { SlashCommand } from '../../structures/SlashCommand';
 import { Client, Collection, Snowflake } from 'discord.js';
 import { syncCommands } from './syncCommands';
-import { logWarning } from '../../misc/logWarning';
+import { logWarning } from '../logging/logWarning';
+import { logNormal } from '../logging/logNormal';
 
 /**
  * Load SlashCommands and store them as client.commands
@@ -15,7 +16,7 @@ export const loadCommands = (client: Client, commands: Array<SlashCommand>): voi
   commands.forEach((command) => {
     // pre-load checks
     if (command.defer && command.deferEphemeral)
-      logWarning(`defer and deferEphemeral are both true for command ${command.name}`);
+      logWarning(`defer and deferEphemeral are both true for command ${command.name}`, client.logLevel);
     // is guild command
     if ('guildId' in command && command.guildId) {
       if (commandsCollection.get(command.guildId)) commandsCollection.get(command.guildId)?.push(command);
@@ -25,7 +26,8 @@ export const loadCommands = (client: Client, commands: Array<SlashCommand>): voi
     }
     // is global command
     commandsCollection.get('global')?.push(command);
-    console.log(`Loaded command ${command.name}`);
+
+    logNormal(`Loaded command ${command.name}`, client.logLevel);
   });
 
   client.commands = commandsCollection;
