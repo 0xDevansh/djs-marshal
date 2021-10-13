@@ -8,7 +8,9 @@
   "author": "Deathvenom54 <fdragon602@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint 'src/**/*.ts' --quiet --fix"
+    "build": "tsc",
+    "test": "node dist/testing/test.js",
+    "dev": "tsc -W"
   },
   "peerDependencies": {
     "discord.js": "13.x"
