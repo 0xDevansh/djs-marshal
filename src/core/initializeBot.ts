@@ -3,6 +3,10 @@ import { MarshalOptions } from '../structures/MarshalOptions';
 import { handleInteraction } from './handlers/handleInteraction';
 import { loadCommandsFromDir } from './commands/loadCommandsFromDir';
 
+/**
+ * Create and setup a bot for slash commands
+ * @param options Options for creating the bot
+ */
 export const initializeBot = (options: MarshalOptions): Client => {
   const client = new Client(options);
 
