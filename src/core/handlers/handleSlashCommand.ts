@@ -1,3 +1,9 @@
+/**
+ * Find and execute slash command
+ * @param int The incoming CommandInteraction
+ * @param client The client where the commands are stored
+ * @param guildId The guildId, if command is from a guild
+ */
 export const handleSlashCommand = async (int: CommandInteraction, client: Client, guildId?: string): Promise<void> => {
   let foundCommand = client.commands.get('global')?.find((c) => c.name === int.commandName);
   if (!foundCommand && guildId) foundCommand = client.commands.get(guildId)?.find((c) => c.name === int.commandName);

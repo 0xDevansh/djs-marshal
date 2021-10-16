@@ -5,7 +5,7 @@ import { logWarning } from '../logging/logWarning';
 import { logNormal } from '../logging/logNormal';
 
 /**
- * Load SlashCommands and store them as client.commands
+ * Load slash commands and store them as client.commands
  * @param client The bot's Client
  * @param commands The array of SlashCommands to load
  */
