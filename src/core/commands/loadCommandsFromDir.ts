@@ -9,9 +9,9 @@ import { loadCommands } from './loadCommands';
  * @param client The bot's Client
  * @param dir The *full* path of the directory
  */
-export const loadCommandsFromDir = async (client: Client, dir: string) => {
+export const loadCommandsFromDir = async (client: Client, dir: string): Promise<void> => {
   const files: string[] = fs.readdirSync(dir).filter((file) => file.endsWith('.js'));
-  let commands: Array<SlashCommand> = [];
+  const commands: Array<SlashCommand> = [];
 
   for (const file of files) {
     const exported = await import(path.join(dir, file));
