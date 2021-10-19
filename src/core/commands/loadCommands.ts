@@ -1,8 +1,7 @@
 import { SlashCommand } from '../../structures/SlashCommand';
 import { Client, Collection, Snowflake } from 'discord.js';
 import { syncCommands } from './syncCommands';
-import { logWarning } from '../logging/logWarning';
-import { logNormal } from '../logging/logNormal';
+import { logWarning, logVerbose, logError } from '../logging/logger';
 
 /**
  * Load slash commands and store them as client.commands
@@ -27,9 +26,9 @@ export const loadCommands = (client: Client, commands: Array<SlashCommand>): voi
     // is global command
     commandsCollection.get('global')?.push(command);
 
-    logNormal(`Loaded command ${command.name}`, client.logLevel);
+    logVerbose(`Loaded command ${command.name}`, client.logLevel);
   });
 
   client.commands = commandsCollection;
-  syncCommands(client.commands, client);
+  syncCommands(client.commands, client).catch(logError);
 };
