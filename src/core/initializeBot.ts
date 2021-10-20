@@ -10,6 +10,9 @@ import { loadCommandsFromDir } from './commands/loadCommandsFromDir';
 export const initializeBot = (options: MarshalOptions): Client => {
   const client = new Client(options);
 
+  client.logLevel = options.logLevel || 'warn';
+  client.logStyle = options.logStyle || 'simple';
+
   client.on('interactionCreate', handleInteraction);
 
   if (options.slashCommandsPath || options.readyMessage)
@@ -24,7 +27,5 @@ export const initializeBot = (options: MarshalOptions): Client => {
     });
 
   if (options.token) client.login(options.token);
-
-  client.logLevel = options.logLevel || 'warn';
   return client;
 };
