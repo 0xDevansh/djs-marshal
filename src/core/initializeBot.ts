@@ -23,7 +23,10 @@ export const initializeBot = (options: MarshalOptions): Client => {
           .replace('{tag}', client.user?.tag || 'User tag not found');
         console.log(logMessage);
       }
-      if (options.slashCommandsPath) loadCommandsFromDir(client, options.slashCommandsPath);
+      if (options.slashCommandsPath)
+        loadCommandsFromDir(client, options.slashCommandsPath).catch((err) => {
+          throw err;
+        });
     });
 
   if (options.token) client.login(options.token);
