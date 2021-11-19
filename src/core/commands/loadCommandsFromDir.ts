@@ -18,5 +18,5 @@ export const loadCommandsFromDir = async (client: Client, dir: string): Promise<
     commands.push(exported.default as SlashCommand);
   }
 
-  loadCommands(client, commands);
+  await loadCommands(client, commands);
 };
