@@ -5,7 +5,7 @@ import { SlashCommand } from '../../structures/SlashCommand';
 import { loadCommands } from './loadCommands';
 
 /**
- * Load slash commands from a specified directory (does not check sub-folders)
+ * Loads slash commands from a specified directory (does not check sub-folders)
  *
  * @param {Client} client The bot's Client
  * @param {string} dir The full path of the directory containing the command files
