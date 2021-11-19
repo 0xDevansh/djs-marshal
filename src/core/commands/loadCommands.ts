@@ -1,15 +1,15 @@
 import { SlashCommand } from '../../structures/SlashCommand';
 import { Client, Collection, Snowflake } from 'discord.js';
 import { syncCommands } from './syncCommands';
-import { logWarning } from '../logging/logWarning';
-import { logNormal } from '../logging/logNormal';
+import { logWarning, logError } from '../logging/logger';
 
 /**
- * Load slash commands and store them as client.commands
- * @param client The bot's Client
- * @param commands The array of SlashCommands to load
+ * Loads slash commands and stores them as client.commands, then syncs them with Discord
+ *
+ * @param {Client} client The bot's Client
+ * @param {SlashCommand[]} commands An array of SlashCommands to load
  */
-export const loadCommands = (client: Client, commands: Array<SlashCommand>): void => {
+export const loadCommands = async (client: Client, commands: SlashCommand[]): Promise<void> => {
   const commandsCollection = new Collection<Snowflake | 'global', Array<SlashCommand>>();
 
   commandsCollection.set('global', []);
@@ -26,10 +26,8 @@ export const loadCommands = (client: Client, commands: Array<SlashCommand>): voi
     }
     // is global command
     commandsCollection.get('global')?.push(command);
-
-    logNormal(`Loaded command ${command.name}`, client.logLevel);
   });
 
   client.commands = commandsCollection;
-  syncCommands(client.commands, client);
+  await syncCommands(client).catch(logError);
 };

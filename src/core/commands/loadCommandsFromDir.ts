@@ -5,9 +5,13 @@ import { SlashCommand } from '../../structures/SlashCommand';
 import { loadCommands } from './loadCommands';
 
 /**
- * Load slash commands from a specified directory (does not check sub-folders)
- * @param client The bot's Client
- * @param dir The *full* path of the directory
+ * Loads slash commands from a specified directory (does not check sub-folders)
+ *
+ * @param {Client} client The bot's Client
+ * @param {string} dir The full path of the directory containing the command files
+ *
+ * @remark All commands that need to be loaded should be in the root level
+ * @remark All command files should export by default a SlashCommand structure
  */
 export const loadCommandsFromDir = async (client: Client, dir: string): Promise<void> => {
   const files: string[] = fs.readdirSync(dir).filter((file) => file.endsWith('.js'));
@@ -18,5 +22,5 @@ export const loadCommandsFromDir = async (client: Client, dir: string): Promise<
     commands.push(exported.default as SlashCommand);
   }
 
-  loadCommands(client, commands);
+  await loadCommands(client, commands);
 };
