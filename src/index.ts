@@ -14,6 +14,8 @@ import { loadCommands } from './core/commands/loadCommands';
 export * from './core/handlers/handleInteraction';
 import { handleInteraction } from './core/handlers/handleInteraction';
 
+export * from './core/logging/logger';
+
 export default {
   initializeBot,
   loadCommands,

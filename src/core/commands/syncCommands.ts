@@ -3,6 +3,13 @@ import { SlashCommand } from '../../structures/SlashCommand';
 import deepEqual from 'deep-equal';
 import { logVerbose } from '../logging/logger';
 
+/**
+ * Compares and syncs global commands if needed
+ *
+ * @param {Client} client The bot's client
+ * @param {Collection<string, ApplicationCommand<{ guild: GuildResolvable }>> | undefined} currentCommands The current global commands registered to Discord
+ * @param {SlashCommand[]} newCommands The commands to sync
+ */
 const syncGlobalCommands = async (
   client: Client,
   currentCommands: Collection<string, ApplicationCommand<{ guild: GuildResolvable }>> | undefined,
@@ -29,7 +36,7 @@ const syncGlobalCommands = async (
 /**
  * Syncs the slash commands with Discord
  *
- * @param client The bot's client
+ * @param {Client} client The bot's client
  */
 export const syncCommands = async (client: Client): Promise<void> => {
   const commands = client.commands;
