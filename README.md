@@ -1,11 +1,13 @@
 
 # djs-marshal
 
+![npm](https://img.shields.io/npm/v/djs-marshal?style=for-the-badge)
+![downloads](https://img.shields.io/npm/dm/djs-marshal?style=for-the-badge)
+![discord](https://img.shields.io/discord/873232757508157470?color=5865F2&label=discord&style=for-the-badge)
+
 A lightweight command handler for discord.js interactions
 
 > This package requires discord.js v13 or higher to be installed
-
-#### This package is currently under construction, more features will be added regularly. The docs are also pretty barebones at the moment and will be improved soon.
 
 ## Installation
 
@@ -22,17 +24,24 @@ npm install discord.js --save
 ## Quick Start
 
 In your root file, preferably index.js/ts, initialize the bot like so
+
 ```js
 import Marshal from 'djs-marshal'
 import { Intents } from "discord.js";
 import path from 'path';
 
-// you can pass in the token to make the client login automatically
+// you can pass in the token to make the client 
+// login automatically
+// https://deathvenom54.github.io/djs-marshal/modules.html#initializeBot
 const client = Marshal.initializeBot({
   intents: [Intents.FLAGS.GUILDS],
   token: 'your-token-here',
   // this is the folder path that contains your commands
-  slashCommandsPath: path.join(__dirname, 'commands')
+  slashCommandsPath: path.join(__dirname, 'commands'),
+  // send all log messages
+  logLevel: 'verbose',
+  // logs messages in a detailed manner
+  logStyle: 'expanded'
 });
 ```
 
@@ -54,6 +63,7 @@ export default {
     command.reply('Pong!')
   }
 } as SlashCommand;
+// https://deathvenom54.github.io/djs-marshal/modules.html#SlashCommand
 ```
 
 ```ts
@@ -92,4 +102,4 @@ export default {
 
 ## Contributing
 
-Please read CONTRIBUTING.md for the guidelines to contribute to this project
+Please read CONTRIBUTING.md for the guidelines to contribute to this project.
