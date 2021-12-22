@@ -15,7 +15,7 @@ export const loadCommands = async (client: Client, commands: SlashCommand[]): Pr
   commandsCollection.set('global', []);
   commands.forEach((command) => {
     // preload checks
-    if (command.defer && command.deferEphemeral)
+    if (command.beforeExecute?.defer && command.beforeExecute?.deferEphemeral)
       logWarning(`defer and deferEphemeral are both true for command ${command.name}`, client);
     // is guild command
     if ('guildId' in command && command.guildId) {

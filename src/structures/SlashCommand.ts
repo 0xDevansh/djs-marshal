@@ -1,13 +1,20 @@
 import { ChatInputApplicationCommandData, CommandInteraction, Snowflake } from 'discord.js';
 
-export interface GlobalSlashCommand extends ChatInputApplicationCommandData {
+type BaseSlashCommand = ChatInputApplicationCommandData & {
   execute: (command: CommandInteraction) => void | Promise<void>;
-  defer?: boolean;
-  deferEphemeral?: boolean;
-}
+  beforeExecute?: {
+    defer?: boolean;
+    deferEphemeral?: boolean;
+  };
+};
 
-export interface GuildSlashCommand extends GlobalSlashCommand {
+export type RegularSlashCommand = BaseSlashCommand & {
+  commandType: 'global' | 'allGuild';
+};
+
+type GuildSlashCommand = BaseSlashCommand & {
+  commandType: 'guild';
   guildId: Snowflake;
-}
+};
 
-export type SlashCommand = GlobalSlashCommand | GuildSlashCommand;
+export type SlashCommand = RegularSlashCommand | GuildSlashCommand;
