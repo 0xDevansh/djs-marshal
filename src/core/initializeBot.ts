@@ -10,24 +10,28 @@ import { loadCommandsFromDir } from './commands/loadCommandsFromDir';
 export const initializeBot = (options: MarshalOptions): Client => {
   const client = new Client(options);
 
+  // logging stuff
   client.logLevel = options.logLevel || 'warn';
   client.logStyle = options.logStyle || 'simple';
+  client.logMethod = options.logMethod;
 
+  // handle all sorts of interactions
   client.on('interactionCreate', handleInteraction);
 
-  if (options.slashCommandsPath || options.readyMessage)
-    client.on('ready', () => {
-      if (options.readyMessage) {
-        const logMessage = options.readyMessage
-          .replace('{username}', client.user?.username || 'Username not found')
-          .replace('{tag}', client.user?.tag || 'User tag not found');
-        console.log(logMessage);
-      }
-      if (options.slashCommandsPath)
-        loadCommandsFromDir(client, options.slashCommandsPath).catch((err) => {
-          throw err;
-        });
-    });
+  client.once('ready', () => {
+    if (options.readyMessage) {
+      const logMessage = options.readyMessage
+        .replace('{username}', client.user?.username || 'Username not found')
+        .replace('{tag}', client.user?.tag || 'User tag not found');
+
+      console.log(logMessage);
+    }
+
+    if (options.slashCommandsPath)
+      loadCommandsFromDir(client, options.slashCommandsPath).catch((err) => {
+        throw err;
+      });
+  });
 
   if (options.token) void client.login(options.token);
   return client;

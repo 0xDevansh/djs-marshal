@@ -9,5 +9,6 @@ declare module 'discord.js' {
     commands: Discord.Collection<Discord.Snowflake | 'global', Array<SlashCommand>>;
     logLevel: logLevel;
     logStyle: logStyle;
+    logMethod?: (message: string, level: logLevel) => void;
   }
 }

@@ -7,6 +7,10 @@ import { Client } from 'discord.js';
  * @param client The client (for logLevel and logStyle)
  */
 export const logVerbose = (message: string, client: Client): void => {
+  if (client.logMethod) {
+    return client.logMethod(message, client.logLevel);
+  }
+
   if (client.logLevel !== 'verbose') return;
   switch (client.logStyle) {
     case 'none':
@@ -26,6 +30,10 @@ export const logVerbose = (message: string, client: Client): void => {
  * @param client The The client (for logLevel and logStyle)
  */
 export const logWarning = (warning: string, client: Client): void => {
+  if (client.logMethod) {
+    return client.logMethod(warning, client.logLevel);
+  }
+
   if (client.logLevel !== 'warn' && client.logLevel !== 'verbose') return;
   switch (client.logStyle) {
     case 'none':
@@ -45,6 +53,10 @@ export const logWarning = (warning: string, client: Client): void => {
  * @param client The The client (for logLevel and logStyle)
  */
 export const logError = (error: string, client: Client): void => {
+  if (client.logMethod) {
+    return client.logMethod(error, client.logLevel);
+  }
+
   switch (client.logStyle) {
     case 'none':
       return console.log(error);

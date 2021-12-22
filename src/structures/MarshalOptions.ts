@@ -15,4 +15,6 @@ export interface MarshalOptions extends ClientOptions {
   logLevel?: logLevel;
   /** How much information should be logged */
   logStyle?: logStyle;
+  /** Custom function for logging, if required */
+  logMethod?: (message: string, level: logLevel) => void;
 }
