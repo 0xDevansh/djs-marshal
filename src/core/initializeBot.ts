@@ -4,27 +4,35 @@ import { handleInteraction } from './handlers/handleInteraction';
 import { loadCommandsFromDir } from './commands/loadCommandsFromDir';
 
 /**
- * Create and setup a bot for slash commands
+ * Create and set up a bot for slash commands
  * @param options Options for creating the bot
  */
 export const initializeBot = (options: MarshalOptions): Client => {
   const client = new Client(options);
 
+  // logging stuff
+  client.logLevel = options.logLevel || 'warn';
+  client.logStyle = options.logStyle || 'simple';
+  client.logMethod = options.logMethod;
+
+  // handle all sorts of interactions
   client.on('interactionCreate', handleInteraction);
 
-  if (options.slashCommandsPath || options.readyMessage)
-    client.on('ready', () => {
-      if (options.readyMessage) {
-        const logMessage = options.readyMessage
-          .replace('{username}', client.user?.username || 'Username not found')
-          .replace('{tag}', client.user?.tag || 'User tag not found');
-        console.log(logMessage);
-      }
-      if (options.slashCommandsPath) loadCommandsFromDir(client, options.slashCommandsPath);
-    });
+  client.once('ready', () => {
+    if (options.readyMessage) {
+      const logMessage = options.readyMessage
+        .replace('{username}', client.user?.username || 'Username not found')
+        .replace('{tag}', client.user?.tag || 'User tag not found');
 
-  if (options.token) client.login(options.token);
+      console.log(logMessage);
+    }
 
-  client.logLevel = options.logLevel || 'warn';
+    if (options.slashCommandsPath)
+      loadCommandsFromDir(client, options.slashCommandsPath).catch((err) => {
+        throw err;
+      });
+  });
+
+  if (options.token) void client.login(options.token);
   return client;
 };

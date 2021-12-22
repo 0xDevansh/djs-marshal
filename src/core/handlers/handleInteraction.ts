@@ -6,5 +6,5 @@ import { handleSlashCommand } from './handleSlashCommand';
  * @param int The incoming interaction
  */
 export const handleInteraction = (int: Interaction): void => {
-  if (int.isCommand()) handleSlashCommand(<CommandInteraction>int, int.client, int.guildId ?? undefined);
+  if (int.isCommand()) void handleSlashCommand(<CommandInteraction>int, int.client, int.guildId ?? undefined);
 };
