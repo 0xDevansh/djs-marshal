@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { logLevel } from '../../structures/logLevel';
+import { logLevel } from '../../structures/logging';
 
 /**
  * Checks logLevel and logs a verbose message
