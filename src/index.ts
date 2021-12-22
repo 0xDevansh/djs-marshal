@@ -11,10 +11,8 @@ export * from './core/commands/loadCommands';
 import { loadCommandsFromDir } from './core/commands/loadCommandsFromDir';
 import { loadCommands } from './core/commands/loadCommands';
 
-export * from './core/handlers/handleInteraction';
 import { handleInteraction } from './core/handlers/handleInteraction';
-
-export * from './core/logging/logger';
+export * from './core/handlers/handleInteraction';
 
 export default {
   initializeBot,
