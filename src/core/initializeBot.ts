@@ -5,7 +5,10 @@ import { loadCommandsFromDir } from './commands/loadCommandsFromDir';
 
 /**
  * Create and set up a bot for slash commands
+ *
  * @param options Options for creating the bot
+ *
+ * @remark Intents need to be specified for creating the client
  */
 export const initializeBot = (options: MarshalOptions): Client => {
   const client = new Client(options);

@@ -2,9 +2,10 @@ import { CommandInteraction, Interaction } from 'discord.js';
 import { handleSlashCommand } from './handleSlashCommand';
 
 /**
- * Check incoming interactions and execute slash commands if any
- * @param int The incoming interaction
+ * Checks incoming interactions and executes slash commands if any
+ *
+ * @param {Interaction} int The incoming interaction
  */
-export const handleInteraction = (int: Interaction): void => {
-  if (int.isCommand()) void handleSlashCommand(<CommandInteraction>int, int.client, int.guildId ?? undefined);
+export const handleInteraction = async (int: Interaction): Promise<void> => {
+  if (int.isCommand()) await handleSlashCommand(<CommandInteraction>int, int.client, int.guildId ?? undefined);
 };
