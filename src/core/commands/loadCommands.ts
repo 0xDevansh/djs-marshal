@@ -1,3 +1,5 @@
+// noinspection GrazieInspection
+
 import { SlashCommand } from '../../structures/SlashCommand';
 import { Client, Collection, Snowflake } from 'discord.js';
 import { syncCommands } from './syncCommands';

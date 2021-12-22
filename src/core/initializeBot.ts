@@ -4,7 +4,7 @@ import { handleInteraction } from './handlers/handleInteraction';
 import { loadCommandsFromDir } from './commands/loadCommandsFromDir';
 
 /**
- * Create and setup a bot for slash commands
+ * Create and set up a bot for slash commands
  * @param options Options for creating the bot
  */
 export const initializeBot = (options: MarshalOptions): Client => {
@@ -29,6 +29,6 @@ export const initializeBot = (options: MarshalOptions): Client => {
         });
     });
 
-  if (options.token) client.login(options.token);
+  if (options.token) void client.login(options.token);
   return client;
 };

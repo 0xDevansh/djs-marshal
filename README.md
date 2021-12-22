@@ -36,7 +36,7 @@ const client = Marshal.initializeBot({
 });
 ```
 
-Now in your commands folder, you can start creating command files!
+Now in your commands' folder, you can start creating command files!
 
 Here are some examples:
 
