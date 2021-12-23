@@ -1,4 +1,4 @@
-import { ChatInputApplicationCommandData, CommandInteraction, Snowflake } from 'discord.js';
+import { ChatInputApplicationCommandData, CommandInteraction, PermissionString, Snowflake } from 'discord.js';
 
 type BaseSlashCommand = ChatInputApplicationCommandData & {
   execute: (command: CommandInteraction) => void | Promise<void>;
@@ -6,6 +6,7 @@ type BaseSlashCommand = ChatInputApplicationCommandData & {
     defer?: boolean;
     deferEphemeral?: boolean;
   };
+  allowWithPermission?: PermissionString[];
 };
 
 export type RegularSlashCommand = BaseSlashCommand & {

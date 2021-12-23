@@ -19,6 +19,9 @@ export const loadCommands = async (client: Client, commands: SlashCommand[]): Pr
     // preload checks
     if (command.beforeExecute?.defer && command.beforeExecute?.deferEphemeral)
       logWarning(`defer and deferEphemeral are both true for command ${command.name}`, client);
+    if (command.allowWithPermission === [])
+      logWarning(`allowWithPermission is [] for ${command.name}, it will be ignored`, client);
+
     if (!command.type) command.type = 'CHAT_INPUT';
     if (!command.defaultPermission) command.defaultPermission = true;
 
