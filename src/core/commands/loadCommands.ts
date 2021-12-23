@@ -10,22 +10,28 @@ import { logWarning, logVerbose, logError } from '../../utils/logger';
  * @param {SlashCommand[]} commands An array of SlashCommands to load
  */
 export const loadCommands = async (client: Client, commands: SlashCommand[]): Promise<void> => {
-  const commandsCollection = new Collection<Snowflake | 'global', Array<SlashCommand>>();
+  const commandsCollection = new Collection<Snowflake | 'global' | 'allGuild', Array<SlashCommand>>();
 
   commandsCollection.set('global', []);
+  commandsCollection.set('allGuild', []);
+
   commands.forEach((command) => {
     // preload checks
     if (command.beforeExecute?.defer && command.beforeExecute?.deferEphemeral)
       logWarning(`defer and deferEphemeral are both true for command ${command.name}`, client);
+    if (!command.type) command.type = 'CHAT_INPUT';
+    if (!command.defaultPermission) command.defaultPermission = true;
+
     // is guild command
-    if ('guildId' in command && command.guildId) {
-      if (commandsCollection.get(command.guildId)) commandsCollection.get(command.guildId)?.push(command);
-      else commandsCollection.set(command.guildId, [command]);
-      console.log(`Loaded command ${command.name}`);
-      return;
+    if (command.commandType === 'guild' && command.guildId) {
+      if (commandsCollection.get(command.guildId)) {
+        commandsCollection.get(command.guildId)?.push(command);
+      } else commandsCollection.set(command.guildId, [command]);
+    } else if (command.commandType === 'allGuild') {
+      commandsCollection.get('allGuild')?.push(command);
+    } else {
+      commandsCollection.get('global')?.push(command);
     }
-    // is global command
-    commandsCollection.get('global')?.push(command);
 
     logVerbose(`Loaded command ${command.name}`, client);
   });
