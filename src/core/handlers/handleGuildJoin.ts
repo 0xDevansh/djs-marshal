@@ -2,7 +2,7 @@ import { Guild } from 'discord.js';
 import { syncGuildCommands } from '../commands/syncCommands';
 
 /**
- * Register commands in a guild when joined
+ * Registers commands in a guild when joined
  *
  * @param {Guild} guild The Guild joined
  */

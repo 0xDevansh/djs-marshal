@@ -30,11 +30,11 @@ import Marshal from 'djs-marshal'
 import { Intents } from "discord.js";
 import path from 'path';
 
-// you can pass in the token to make the client 
-// login automatically
 // https://deathvenom54.github.io/djs-marshal/modules.html#initializeBot
 const client = Marshal.initializeBot({
   intents: [Intents.FLAGS.GUILDS],
+  // you can pass in the token to make the client login 
+  // automatically 
   token: 'your-token-here',
   // this is the folder path that contains your commands
   slashCommandsPath: path.join(__dirname, 'commands'),
@@ -56,13 +56,16 @@ import { SlashCommand } from "djs-marshal";
 // a pretty basic command. command is a discord.js
 // CommandInteraction and you can use its methods like
 // reply, defer, editReply, etc.
-export default {
+const ping: SlashCommand = {
   name: 'ping',
   description: 'Play ping-pong with me',
+  commandType: 'global',
   execute (command) {
     command.reply('Pong!')
   }
-} as SlashCommand;
+};
+
+export default ping;
 // https://deathvenom54.github.io/djs-marshal/modules.html#SlashCommand
 ```
 
@@ -72,14 +75,17 @@ import { SlashCommand } from "djs-marshal";
 
 // any command with a guildId specified is registered as
 // as a guild command and will only work in that guild
-export default {
+const guildPing: SlashCommand = {
   name: 'guildping',
   description: 'Play ping-pong with me in this server',
+  commandType: 'guild',
   guildId: '873232757508157470',
   execute (command) {
     command.reply('Peng!');
   }
-} as SlashCommand;
+};
+
+export default guildPing;
 ```
 
 ```ts
@@ -87,9 +93,10 @@ export default {
 import { SlashCommand } from "djs-marshal";
 
 // you can pass in defer as true to defer the interaction beforehand
-export default {
+const deferredPing: SlashCommand = {
   name: 'slothping',
   description: 'piiiiiinnnnnng',
+  commandType: 'global',
   // you can also use deferEphemeral to mark the reply ephemeral
   defer: true,
   execute (command) {
@@ -97,7 +104,30 @@ export default {
       command.editReply('Pooooooonnnngg!');
     }, 3000)
   }
-} as SlashCommand;
+};
+
+export default deferredPing;
+```
+
+```ts
+// secret.js|ts
+import { SlashCommand } from "djs-marshal";
+
+const secret: SlashCommand = {
+  name: 'secret',
+  description: 'Only for server moderators',
+  // this command is registered in all the
+  // guilds the bot is in
+  commandType: 'allGuild',
+  // this disables the command for anyone who
+  // doesn't have any of these permissions
+  allowWithPermission: ['MANAGE_SERVER'],
+  async execute (command) {
+    command.reply('Secret moderators stuff')
+  }
+};
+
+export default secret;
 ```
 
 ## Contributing

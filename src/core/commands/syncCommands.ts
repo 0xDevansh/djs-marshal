@@ -15,10 +15,10 @@ import { toApplicationCommand } from '../../utils/toApplicationCommand';
 /**
  * Compares and syncs global commands if needed
  *
- * @param application
+ * @param application The client's application (client.application)
  * @param {SlashCommand[]} newCommands The commands to sync
  */
-const syncGlobalCommands = async (application: ClientApplication, newCommands: SlashCommand[]) => {
+const syncGlobalCommands = async (application: ClientApplication, newCommands: SlashCommand[]): Promise<void> => {
   const currentCommands = await application.commands.fetch();
   const cc = currentCommands.map((c) => toApplicationCommand(c));
 
@@ -55,13 +55,13 @@ const syncGlobalCommands = async (application: ClientApplication, newCommands: S
 };
 
 /**
- * Make sure users with only selected permissions can use the command
+ * Makes sure users with only selected permissions can use the command
  *
- * @param guild The guild
- * @param command The SlashCommand
- * @param existing The existing ApplicationCommand
+ * @param guild The guild in which command should be checked
+ * @param command The SlashCommand to be checked
+ * @param existing The existing ApplicationCommand in guild
  */
-const syncPermissions = async (guild: Guild, command: SlashCommand, existing: ApplicationCommand) => {
+const syncPermissions = async (guild: Guild, command: SlashCommand, existing: ApplicationCommand): Promise<void> => {
   if ('allowWithPermission' in command && command.allowWithPermission?.length) {
     // this won't work without GUILDS and GUILD_MEMBERS intents
     if (!new Intents(guild.client.options.intents).has('GUILD_MEMBERS'))
@@ -113,7 +113,7 @@ const syncPermissions = async (guild: Guild, command: SlashCommand, existing: Ap
 /**
  * Compares and syncs commands for a guild
  *
- * @param guild
+ * @param guild The guild to sync commands of
  * @param {SlashCommand[]} newCommands The current commands to sync
  */
 export const syncGuildCommands = async (guild: Guild, newCommands: SlashCommand[]): Promise<void> => {
