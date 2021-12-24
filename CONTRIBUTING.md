@@ -26,3 +26,4 @@ You can look at recent commits to see examples. Please don't commit a lot of cha
 
 - Take a look over the code you have added or changed. Make sure it is readable and properly commented.
 - **run the lint script** before committing (`npm run lint` or `yarn lint`)
+- - **run the docs script** to rebuild docs before committing (`npm run docs` or `yarn docs`)
