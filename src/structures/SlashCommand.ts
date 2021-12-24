@@ -6,7 +6,6 @@ type BaseSlashCommand = ChatInputApplicationCommandData & {
     defer?: boolean;
     deferEphemeral?: boolean;
   };
-  allowWithPermission?: PermissionString[];
 };
 
 export type RegularSlashCommand = BaseSlashCommand & {
@@ -16,6 +15,7 @@ export type RegularSlashCommand = BaseSlashCommand & {
 type GuildSlashCommand = BaseSlashCommand & {
   commandType: 'guild';
   guildId: Snowflake;
+  allowWithPermission?: PermissionString[];
 };
 
 export type SlashCommand = RegularSlashCommand | GuildSlashCommand;
