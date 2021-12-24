@@ -2,7 +2,7 @@ import { GuildMember, PartialGuildMember } from 'discord.js';
 import deepEqual from 'deep-equal';
 
 /**
- * Refresh command permissions when a member is updated
+ * Refreshes command permissions when a member is updated
  *
  * @param {GuildMember} oldM The old member
  * @param {GuildMember} newM The updated member
