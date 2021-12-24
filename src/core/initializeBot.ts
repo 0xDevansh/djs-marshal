@@ -2,6 +2,8 @@ import { Client } from 'discord.js';
 import { MarshalOptions } from '../structures/MarshalOptions';
 import { handleInteraction } from './handlers/handleInteraction';
 import { loadCommandsFromDir } from './commands/loadCommandsFromDir';
+import { handleGuildJoin } from './handlers/handleGuildJoin';
+import { handleGuildMemberUpdate } from './handlers/handleGuildMemberUpdate';
 
 /**
  * Create and set up a bot for slash commands
@@ -20,6 +22,9 @@ export const initializeBot = (options: MarshalOptions): Client => {
 
   // handle all sorts of interactions
   client.on('interactionCreate', handleInteraction);
+
+  client.on('guildCreate', handleGuildJoin);
+  client.on('guildMemberUpdate', handleGuildMemberUpdate);
 
   client.once('ready', () => {
     if (options.readyMessage) {

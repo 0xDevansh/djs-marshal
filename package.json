@@ -15,7 +15,7 @@
     "docs": "typedoc"
   },
   "peerDependencies": {
-    "discord.js": "13.x"
+    "discord.js": ">=13.2.x"
   },
   "devDependencies": {
     "@types/chalk": "^2.2.0",
