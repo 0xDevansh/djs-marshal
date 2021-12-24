@@ -1,13 +1,21 @@
-import { ChatInputApplicationCommandData, CommandInteraction, Snowflake } from 'discord.js';
+import { ChatInputApplicationCommandData, CommandInteraction, PermissionString, Snowflake } from 'discord.js';
 
-export interface GlobalSlashCommand extends ChatInputApplicationCommandData {
+export type BaseSlashCommand = ChatInputApplicationCommandData & {
   execute: (command: CommandInteraction) => void | Promise<void>;
-  defer?: boolean;
-  deferEphemeral?: boolean;
-}
+  beforeExecute?: {
+    defer?: boolean;
+    deferEphemeral?: boolean;
+  };
+};
 
-export interface GuildSlashCommand extends GlobalSlashCommand {
+export type RegularSlashCommand = BaseSlashCommand & {
+  commandType: 'global' | 'allGuild';
+};
+
+export type GuildSlashCommand = BaseSlashCommand & {
+  commandType: 'guild';
   guildId: Snowflake;
-}
+  allowWithPermission?: PermissionString[];
+};
 
-export type SlashCommand = GlobalSlashCommand | GuildSlashCommand;
+export type SlashCommand = RegularSlashCommand | GuildSlashCommand;
