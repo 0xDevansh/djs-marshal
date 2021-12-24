@@ -54,6 +54,13 @@ const syncGlobalCommands = async (application: ClientApplication, newCommands: S
   }
 };
 
+/**
+ * Make sure users with only selected permissions can use the command
+ *
+ * @param guild The guild
+ * @param command The SlashCommand
+ * @param existing The existing ApplicationCommand
+ */
 const syncPermissions = async (guild: Guild, command: SlashCommand, existing: ApplicationCommand) => {
   if ('allowWithPermission' in command && command.allowWithPermission?.length) {
     // this won't work without GUILDS and GUILD_MEMBERS intents
@@ -109,7 +116,7 @@ const syncPermissions = async (guild: Guild, command: SlashCommand, existing: Ap
  * @param guild
  * @param {SlashCommand[]} newCommands The current commands to sync
  */
-const syncGuildCommands = async (guild: Guild, newCommands: SlashCommand[]) => {
+export const syncGuildCommands = async (guild: Guild, newCommands: SlashCommand[]): Promise<void> => {
   const guildCommands = await guild.commands.fetch();
   const gc = Array.from(guildCommands.values());
 
