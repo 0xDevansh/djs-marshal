@@ -46,6 +46,9 @@ const client = Marshal.initializeBot({
   // (default: 'simple') how to style the logs
   logStyle: 'extended',
 });
+
+// if you didn't provide the token above, log in yourself
+// client.login(process.env.BOT_TOKEN);
 ```
 
 
@@ -76,29 +79,7 @@ client.on('guildMemberUpdate', Marshal.handlers.handleGuildMemberUpdate);
 client.login(process.env.BOT_TOKEN);
 ```
 
-## Quick Start
-
-In your root file, preferably index.js/ts, initialize the bot like so
-
-```js
-import Marshal from 'djs-marshal'
-import { Intents } from "discord.js";
-import path from 'path';
-
-// https://deathvenom54.github.io/djs-marshal/modules.html#initializeBot
-const client = Marshal.initializeBot({
-  intents: [Intents.FLAGS.GUILDS],
-  // you can pass in the token to make the client login 
-  // automatically 
-  token: 'your-token-here',
-  // this is the folder path that contains your commands
-  slashCommandsPath: path.join(__dirname, 'commands'),
-  // send all log messages
-  logLevel: 'verbose',
-  // logs messages in a detailed manner
-  logStyle: 'expanded'
-});
-```
+## Commands
 
 Now in your commands' folder, you can start creating command files!
 
