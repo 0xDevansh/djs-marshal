@@ -12,11 +12,22 @@ import { loadCommandsFromDir } from './core/commands/loadCommandsFromDir';
 import { loadCommands } from './core/commands/loadCommands';
 
 import { handleInteraction } from './core/handlers/handleInteraction';
+import { handleGuildJoin } from './core/handlers/handleGuildJoin';
+import { handleGuildMemberUpdate } from './core/handlers/handleGuildMemberUpdate';
+
 export * from './core/handlers/handleInteraction';
+export * from './core/handlers/handleGuildJoin';
+export * from './core/handlers/handleGuildMemberUpdate';
+
+const handlers = {
+  handleInteraction,
+  handleGuildJoin,
+  handleGuildMemberUpdate,
+};
 
 export default {
   initializeBot,
   loadCommands,
   loadCommandsFromDir,
-  handleInteraction,
+  handlers,
 };
