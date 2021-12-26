@@ -21,6 +21,61 @@ yarn add djs-marshal
 npm install discord.js --save
 ```
 
+## Setup
+
+You can set up your bot to handle commands in 2 ways:
+
+### initializeBot()
+
+This is the recommended way to set up your bot. It sets up various things
+like commands' directory, logging and handlers for various events required.
+
+```ts
+import Marshal from 'djs-marshal';
+import path from 'path';
+
+const client = Marshal.initializeBot({
+  // the path where slash commands are stored
+  slashCommandsPath: path.join(__dirname, 'commands'),
+  // (optional) message to log on ready event
+  readyMessage: 'Logged in as {tag}',
+  // (optional) bot's token, will login if provided
+  token: process.env.BOT_TOKEN,
+  // (default: 'warn') the level of logs to log in the console
+  logLevel: 'verbose',
+  // (default: 'simple') how to style the logs
+  logStyle: 'extended',
+});
+```
+
+
+### Doing it yourself
+
+I don't recommend this, but if you want to, by all means you can set it up yourself.
+
+```ts
+import Marshal from './src/index';
+import Discord from 'discord.js';
+import path from 'path';
+
+const client = new Discord.Client();
+
+// load commands
+Marshal.loadCommandsFromDir(path.join(__dirame, 'commands'));
+
+// some parameters
+client.logLevel = 'warn';
+client.logStyle = 'simple';
+
+// handlers
+client.on('interactionCreate', Marshal.handlers.handleInteraction);
+client.on('guildAdd', Marshal.handlers.handleGuildJoin);
+// add this only if you have a command with allowWithPermission
+client.on('guildMemberUpdate', Marshal.handlers.handleGuildMemberUpdate);
+
+client.login(process.env.BOT_TOKEN);
+```
+
 ## Quick Start
 
 In your root file, preferably index.js/ts, initialize the bot like so
