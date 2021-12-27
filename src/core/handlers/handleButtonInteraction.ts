@@ -18,5 +18,14 @@ export const handleButtonInteraction = async (int: ButtonInteraction): Promise<v
       int.client,
     );
 
+  // beforeExecute stuff
+  if (button.beforeExecute?.deferUpdate) {
+    await int.deferUpdate();
+  } else if (button.beforeExecute?.deferReplyEphemeral) {
+    await int.deferReply({ ephemeral: true });
+  } else if (button.beforeExecute?.deferReply) {
+    await int.deferReply();
+  }
+
   await button.execute(int);
 };
