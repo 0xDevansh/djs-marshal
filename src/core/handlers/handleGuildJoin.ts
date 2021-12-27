@@ -1,5 +1,4 @@
 import { Guild } from 'discord.js';
-import { syncGuildCommands } from '../commands/syncCommands';
 
 /**
  * Registers commands in a guild when joined
@@ -8,5 +7,5 @@ import { syncGuildCommands } from '../commands/syncCommands';
  */
 export const handleGuildJoin = (guild: Guild): void => {
   const commands = (guild.client.commands.get(guild.id) || []).concat(guild.client.commands.get('allGuild') || []);
-  void syncGuildCommands(guild, commands);
+  void guild.commands.set(commands);
 };
