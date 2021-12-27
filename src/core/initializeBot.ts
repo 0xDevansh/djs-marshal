@@ -4,6 +4,7 @@ import { handleInteraction } from './handlers/handleInteraction';
 import { loadCommandsFromDir } from './commands/loadCommandsFromDir';
 import { handleGuildJoin } from './handlers/handleGuildJoin';
 import { handleGuildMemberUpdate } from './handlers/handleGuildMemberUpdate';
+import { loadButtonsFromDir } from './buttons/loadButtonsFromDir';
 
 /**
  * Create and set up a bot for slash commands
@@ -20,9 +21,13 @@ export const initializeBot = (options: MarshalOptions): Client => {
   client.logStyle = options.logStyle || 'simple';
   client.logMethod = options.logMethod;
 
-  // load commands
+  // load commands and buttons
   if (options.slashCommandsPath)
     loadCommandsFromDir(client, options.slashCommandsPath).catch((err) => {
+      throw err;
+    });
+  if (options.buttonsPath)
+    loadButtonsFromDir(client, options.buttonsPath).catch((err) => {
       throw err;
     });
 
