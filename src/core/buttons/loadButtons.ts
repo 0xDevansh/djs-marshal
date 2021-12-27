@@ -1,5 +1,6 @@
 import { ButtonCommand } from '../../structures/ButtonCommand';
 import { Client, Collection } from 'discord.js';
+import { logWarning } from '../../utils/logger';
 
 /**
  * Loads the buttons provided into client.buttons
@@ -11,6 +12,15 @@ export const loadButtons = (client: Client, buttons: ButtonCommand[]): void => {
   const buttonCollection = new Collection<string | RegExp, ButtonCommand>();
 
   buttons.forEach((button) => {
+    // checks
+    if (button.beforeExecute?.deferReplyEphemeral && button.beforeExecute?.deferReply) {
+      logWarning(`deferReply and deferReplyEphemeral are both set to true for button ${button.customId}`, client);
+    }
+    const defer = button.beforeExecute?.deferReplyEphemeral || button.beforeExecute?.deferReply;
+    if (defer && button.beforeExecute?.deferUpdate) {
+      logWarning(`deferReply and deferUpdate are both set to true for button ${button.customId}`, client);
+    }
+
     buttonCollection.set(button.customId, button);
   });
 
