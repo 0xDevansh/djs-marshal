@@ -4,6 +4,7 @@ import { handleInteraction } from './handlers/handleInteraction';
 import { loadCommandsFromDir } from './commands/loadCommandsFromDir';
 import { handleGuildJoin } from './handlers/handleGuildJoin';
 import { handleGuildMemberUpdate } from './handlers/handleGuildMemberUpdate';
+import { loadButtonsFromDir } from './buttons/loadButtonsFromDir';
 
 /**
  * Create and set up a bot for slash commands
@@ -20,25 +21,25 @@ export const initializeBot = (options: MarshalOptions): Client => {
   client.logStyle = options.logStyle || 'simple';
   client.logMethod = options.logMethod;
 
-  // load commands
-  if (options.slashCommandsPath)
-    loadCommandsFromDir(client, options.slashCommandsPath).catch((err) => {
-      throw err;
-    });
-
   // handle all sorts of interactions
   client.on('interactionCreate', handleInteraction);
 
   client.on('guildCreate', handleGuildJoin);
   client.on('guildMemberUpdate', handleGuildMemberUpdate);
 
-  if (options.readyMessage) {
-    const message = options.readyMessage
-      .replace('{username}', client.user?.username || 'Username not found')
-      .replace('{tag}', client.user?.tag || 'User tag not found');
+  client.on('ready', () => {
+    // load commands and buttons
+    if (options.slashCommandsPath) void loadCommandsFromDir(client, options.slashCommandsPath);
+    if (options.buttonsPath) void loadButtonsFromDir(client, options.buttonsPath);
 
-    client.once('ready', () => console.log(message));
-  }
+    // log readyMessage
+    if (options.readyMessage) {
+      const message = options.readyMessage
+        .replace('{username}', client.user?.username || 'Username not found')
+        .replace('{tag}', client.user?.tag || 'User tag not found');
+      console.log(message);
+    }
+  });
 
   if (options.token) void client.login(options.token);
   return client;
