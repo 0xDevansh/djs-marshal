@@ -2,6 +2,7 @@ import { initializeBot } from './core/initializeBot';
 export { initializeBot } from './core/initializeBot';
 
 export * from './structures/SlashCommand';
+export * from './structures/ButtonCommand';
 export * from './structures/MarshalOptions';
 export * from './structures/logging';
 export * from './structures/CommandCollection';
