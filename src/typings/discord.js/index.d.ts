@@ -8,7 +8,7 @@ import { ButtonCommand } from '../../structures/ButtonCommand';
 declare module 'discord.js' {
   export interface Client {
     commands: Discord.Collection<Discord.Snowflake | 'global' | 'allGuild', Array<SlashCommand>>;
-    buttons: Discord.Collection<string, ButtonCommand>;
+    buttons: Discord.Collection<string | RegExp, ButtonCommand>;
     logLevel: logLevel;
     logStyle: logStyle;
     logMethod?: (message: string, level: logLevel) => void;
