@@ -20,26 +20,25 @@ export const initializeBot = (options: MarshalOptions): Client => {
   client.logStyle = options.logStyle || 'simple';
   client.logMethod = options.logMethod;
 
+  // load commands
+  if (options.slashCommandsPath)
+    loadCommandsFromDir(client, options.slashCommandsPath).catch((err) => {
+      throw err;
+    });
+
   // handle all sorts of interactions
   client.on('interactionCreate', handleInteraction);
 
   client.on('guildCreate', handleGuildJoin);
   client.on('guildMemberUpdate', handleGuildMemberUpdate);
 
-  client.once('ready', () => {
-    if (options.readyMessage) {
-      const logMessage = options.readyMessage
-        .replace('{username}', client.user?.username || 'Username not found')
-        .replace('{tag}', client.user?.tag || 'User tag not found');
+  if (options.readyMessage) {
+    const message = options.readyMessage
+      .replace('{username}', client.user?.username || 'Username not found')
+      .replace('{tag}', client.user?.tag || 'User tag not found');
 
-      console.log(logMessage);
-    }
-
-    if (options.slashCommandsPath)
-      loadCommandsFromDir(client, options.slashCommandsPath).catch((err) => {
-        throw err;
-      });
-  });
+    client.once('ready', () => console.log(message));
+  }
 
   if (options.token) void client.login(options.token);
   return client;
