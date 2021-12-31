@@ -8,8 +8,7 @@ import { logWarning } from '../../utils/logger';
  */
 export const handleButtonInteraction = async (int: ButtonInteraction): Promise<void> => {
   const button = int.client.buttons.find((button) => {
-    if (typeof button.customId === 'string') return button.customId === int.customId;
-    else return button.customId.test(int.customId);
+    return typeof button.customId === 'string' ? button.customId === int.customId : button.customId.test(int.customId);
   });
 
   if (!button)

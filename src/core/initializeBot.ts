@@ -5,6 +5,7 @@ import { loadCommandsFromDir } from './commands/loadCommandsFromDir';
 import { handleGuildJoin } from './handlers/handleGuildJoin';
 import { handleGuildMemberUpdate } from './handlers/handleGuildMemberUpdate';
 import { loadButtonsFromDir } from './buttons/loadButtonsFromDir';
+import { loadSelectMenusFromDir } from './selectMenus/loadSelectMenusFromDir';
 
 /**
  * Create and set up a bot for slash commands
@@ -28,9 +29,10 @@ export const initializeBot = (options: MarshalOptions): Client => {
   client.on('guildMemberUpdate', handleGuildMemberUpdate);
 
   client.on('ready', () => {
-    // load commands and buttons
+    // load commands, buttons and select menus
     if (options.slashCommandsPath) void loadCommandsFromDir(client, options.slashCommandsPath);
     if (options.buttonsPath) void loadButtonsFromDir(client, options.buttonsPath);
+    if (options.selectMenusPath) void loadSelectMenusFromDir(client, options.selectMenusPath);
 
     // log readyMessage
     if (options.readyMessage) {

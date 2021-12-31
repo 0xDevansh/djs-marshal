@@ -10,7 +10,7 @@ export const loadButtonsFromDir = async (client: Client, path: string): Promise<
   await Promise.all(
     files.map(async (file) => {
       const button = await import(`${path}/${file}`);
-      if (button.default) buttons.push(<ButtonCommand>button.default);
+      if (button.default) buttons.push(button.default);
     }),
   );
 
