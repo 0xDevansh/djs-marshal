@@ -111,40 +111,6 @@ const syncPermissions = async (guild: Guild, command: SlashCommand, existing: Ap
 };
 
 /**
- * Compares and syncs commands for a guild
- *
- * @param guild The guild to sync commands of
- * @param {SlashCommand[]} newCommands The current commands to sync
- */
-export const syncGuildCommands = async (guild: Guild, newCommands: SlashCommand[]): Promise<void> => {
-  const guildCommands = await guild.commands.fetch();
-  const gc = Array.from(guildCommands.values());
-
-  for (const command of newCommands) {
-    const existing = gc.find((c) => c.name === command.name);
-
-    // no existing command
-    if (!existing) {
-      const created = await guild.commands.create(command);
-      await syncPermissions(guild, command, created);
-    } else {
-      // existing command
-      const commandsAreEqual = deepEqual(toApplicationCommand(existing), toApplicationCommand(command));
-      if (!commandsAreEqual) {
-        const created = await guild.commands.create(command);
-        await syncPermissions(guild, command, created);
-      }
-      gc.splice(gc.indexOf(existing), 1);
-    }
-  }
-
-  // delete leftover commands
-  if (gc.length) {
-    await Promise.all(gc.map(async (c) => await c.delete()));
-  }
-};
-
-/**
  * Syncs the slash commands with Discord
  *
  * @param {Client} client The bot's client
@@ -163,7 +129,19 @@ export const syncCommands = async (client: Client): Promise<void> => {
   // sync guild commands
   for (const [guildId, guild] of client.guilds.cache) {
     const guildCommands = (commands.get('allGuild') || [])?.concat(commands.get(guildId) || []);
-    await syncGuildCommands(guild, guildCommands);
+    await guild.commands.set(guildCommands);
+    // sync permission
+    await Promise.all(
+      guildCommands.map(async (com) => {
+        if ('allowWithPermission' in com && com.allowWithPermission?.length) {
+          const registered = guild.commands.cache.find((c) => c.name === com.name);
+          if (!registered) return;
+
+          await syncPermissions(guild, com, registered);
+        }
+      }),
+    );
   }
+
   logVerbose('Successfully synced commands', client);
 };

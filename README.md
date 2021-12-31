@@ -9,6 +9,8 @@ A lightweight command handler for discord.js interactions
 
 > This package requires discord.js v13 or higher to be installed
 
+[**Technical documentation**](https://deathvenom54.github.io/djs-marshal): Refer this because I am too lazy to write documentation
+
 ## Installation
 
 ```bash
@@ -79,11 +81,11 @@ client.on('guildMemberUpdate', Marshal.handlers.handleGuildMemberUpdate);
 client.login(process.env.BOT_TOKEN);
 ```
 
-## Commands
+## Slash Commands
 
 Now in your commands' folder, you can start creating command files!
 
-Here are some examples:
+## Examples
 
 ```ts
 // ping.js|ts

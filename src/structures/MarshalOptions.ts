@@ -9,6 +9,10 @@ export interface MarshalOptions extends ClientOptions {
   token?: string;
   /** Path to the slash commands directory */
   slashCommandsPath?: string;
+  /** Path to the buttons directory */
+  buttonsPath?: string;
+  /** Path to the select menus directory */
+  selectMenusPath?: string;
   /** Message to be logged when bot is ready */
   readyMessage?: string;
   /** Specifies what information should be logged to the console */
