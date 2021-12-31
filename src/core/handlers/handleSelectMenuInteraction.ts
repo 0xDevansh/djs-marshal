@@ -17,5 +17,12 @@ export const handleSelectMenuInteraction = async (int: SelectMenuInteraction): P
       int.client,
     );
 
+  // beforeExecute stuff
+  if (selectMenu.beforeExecute?.deferReplyEphemeral) {
+    await int.deferReply({ ephemeral: true });
+  } else if (selectMenu.beforeExecute?.deferReply) {
+    await int.deferReply();
+  }
+
   await selectMenu.execute(int);
 };

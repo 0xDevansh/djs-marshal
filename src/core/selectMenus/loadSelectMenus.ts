@@ -1,5 +1,6 @@
 import { SelectMenuCommand } from '../../structures/SelectMenuCommand';
 import { Client, Collection } from 'discord.js';
+import { logWarning } from '../../utils/logger';
 
 /**
  * Loads the select menus provided into client.selectMenus
@@ -10,7 +11,14 @@ import { Client, Collection } from 'discord.js';
 export const loadSelectMenus = (client: Client, selectMenus: SelectMenuCommand[]): void => {
   const menuCollection = new Collection<string | RegExp, SelectMenuCommand>();
 
-  selectMenus.forEach((menu) => menuCollection.set(menu.customId, menu));
+  selectMenus.forEach((menu) => {
+    // checks
+    if (menu.beforeExecute?.deferReplyEphemeral && menu.beforeExecute?.deferReply) {
+      logWarning(`deferReply and deferReplyEphemeral are both set to true for select menu ${menu.customId}`, client);
+    }
+
+    menuCollection.set(menu.customId, menu);
+  });
 
   client.selectMenus = menuCollection;
 };
