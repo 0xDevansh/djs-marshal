@@ -6,7 +6,6 @@ export * from './structures/ButtonCommand';
 export * from './structures/SelectMenuCommand';
 export * from './structures/MarshalOptions';
 export * from './structures/logging';
-export * from './structures/CommandCollection';
 
 export * from './core/commands/loadCommandsFromDir';
 export * from './core/commands/loadCommands';
