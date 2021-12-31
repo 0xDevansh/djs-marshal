@@ -18,6 +18,12 @@ export * from './core/buttons/loadButtons';
 import { loadButtonsFromDir } from './core/buttons/loadButtonsFromDir';
 import { loadButtons } from './core/buttons/loadButtons';
 
+export * from './core/selectMenus/loadSelectMenusFromDir';
+export * from './core/selectMenus/loadSelectMenus';
+
+import { loadSelectMenusFromDir } from './core/selectMenus/loadSelectMenusFromDir';
+import { loadSelectMenus } from './core/selectMenus/loadSelectMenus';
+
 import { handleInteraction } from './core/handlers/handleInteraction';
 import { handleGuildJoin } from './core/handlers/handleGuildJoin';
 import { handleGuildMemberUpdate } from './core/handlers/handleGuildMemberUpdate';
@@ -37,5 +43,7 @@ export default {
   loadCommandsFromDir,
   loadButtons,
   loadButtonsFromDir,
+  loadSelectMenusFromDir,
+  loadSelectMenus,
   handlers,
 };
