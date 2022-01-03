@@ -61,7 +61,11 @@ const syncGlobalCommands = async (application: ClientApplication, newCommands: S
  * @param command The SlashCommand to be checked
  * @param existing The existing ApplicationCommand in guild
  */
-const syncPermissions = async (guild: Guild, command: SlashCommand, existing: ApplicationCommand): Promise<void> => {
+export const syncPermissions = async (
+  guild: Guild,
+  command: SlashCommand,
+  existing: ApplicationCommand,
+): Promise<void> => {
   if ('allowWithPermission' in command && command.allowWithPermission?.length) {
     // this won't work without GUILDS and GUILD_MEMBERS intents
     if (!new Intents(guild.client.options.intents).has('GUILD_MEMBERS'))
@@ -111,6 +115,30 @@ const syncPermissions = async (guild: Guild, command: SlashCommand, existing: Ap
 };
 
 /**
+ * Sync commands of a guild
+ *
+ * @param {Guild} guild The guild to sync
+ */
+export const syncGuildCommands = async (guild: Guild): Promise<void> => {
+  const commands = guild.client.commands;
+
+  const guildCommands = (commands.get('allGuild') || [])?.concat(commands.get(guild.id) || []);
+  await guild.commands.set(guildCommands);
+
+  // sync permission
+  await Promise.all(
+    guildCommands.map(async (com) => {
+      if ('allowWithPermission' in com && com.allowWithPermission?.length) {
+        const registered = guild.commands.cache.find((c) => c.name === com.name);
+        if (!registered) return;
+
+        await syncPermissions(guild, com, registered);
+      }
+    }),
+  );
+};
+
+/**
  * Syncs the slash commands with Discord
  *
  * @param {Client} client The bot's client
@@ -127,21 +155,7 @@ export const syncCommands = async (client: Client): Promise<void> => {
   if (global) await syncGlobalCommands(application, global);
 
   // sync guild commands
-  for (const [guildId, guild] of client.guilds.cache) {
-    const guildCommands = (commands.get('allGuild') || [])?.concat(commands.get(guildId) || []);
-    await guild.commands.set(guildCommands);
-    // sync permission
-    await Promise.all(
-      guildCommands.map(async (com) => {
-        if ('allowWithPermission' in com && com.allowWithPermission?.length) {
-          const registered = guild.commands.cache.find((c) => c.name === com.name);
-          if (!registered) return;
-
-          await syncPermissions(guild, com, registered);
-        }
-      }),
-    );
-  }
+  client.guilds.cache.forEach((guild) => syncGuildCommands(guild));
 
   logVerbose('Successfully synced commands', client);
 };

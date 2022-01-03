@@ -30,6 +30,8 @@ export * from './core/handlers/handleInteraction';
 export * from './core/handlers/handleGuildJoin';
 export * from './core/handlers/handleGuildMemberUpdate';
 
+export * from './core/commands/syncCommands';
+
 const handlers = {
   handleInteraction,
   handleGuildJoin,
