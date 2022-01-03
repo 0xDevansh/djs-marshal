@@ -5,6 +5,7 @@ import {
   ClientApplication,
   Guild,
   Intents,
+  Role,
   Snowflake,
 } from 'discord.js';
 import { SlashCommand } from '../../structures/SlashCommand';
@@ -54,6 +55,35 @@ const syncGlobalCommands = async (application: ClientApplication, newCommands: S
   }
 };
 
+const syncPermissionForRole = async (
+  command: SlashCommand,
+  role: Role,
+): Promise<{
+  allowedRoles: Snowflake[];
+  allowedMembers: Snowflake[];
+}> => {
+  const allowedRoles: Snowflake[] = [];
+  const allowedMembers: Snowflake[] = [];
+  const seenMembers: Snowflake[] = [];
+
+  const isAllowed = command.allowWithPermission?.some((perm) => role.permissions.has(perm));
+  if (isAllowed) allowedRoles.push(role.id);
+  // doesn't have permission, check members individually
+  else {
+    role.members.forEach((member) => {
+      // make sure member is not repeated
+      if (seenMembers.includes(member.id)) return;
+
+      const memberAllowed = command.allowWithPermission?.some((perm) => member.permissions.has(perm));
+      if (memberAllowed) allowedMembers.push(member.id);
+
+      seenMembers.push(member.id);
+    });
+  }
+
+  return { allowedRoles, allowedMembers };
+};
+
 /**
  * Makes sure users with only selected permissions can use the command
  *
@@ -61,46 +91,46 @@ const syncGlobalCommands = async (application: ClientApplication, newCommands: S
  * @param command The SlashCommand to be checked
  * @param existing The existing ApplicationCommand in guild
  */
-const syncPermissions = async (guild: Guild, command: SlashCommand, existing: ApplicationCommand): Promise<void> => {
+export const syncPermissions = async (
+  guild: Guild,
+  command: SlashCommand,
+  existing: ApplicationCommand,
+): Promise<void> => {
   if ('allowWithPermission' in command && command.allowWithPermission?.length) {
     // this won't work without GUILDS and GUILD_MEMBERS intents
     if (!new Intents(guild.client.options.intents).has('GUILD_MEMBERS'))
       throw new Error('allowWithPermission requires the GUILD_MEMBERS intent');
 
-    // get allowed roles
-    const allowedRoles: Snowflake[] = [];
-    const allowedMembers: Snowflake[] = [];
-    const seenMembers: Snowflake[] = [];
-
     // fetch members for cache
     await guild.members.fetch();
 
     const roles = await guild.roles.fetch();
-    roles.forEach((role) => {
-      const isAllowed = command.allowWithPermission?.some((perm) => role.permissions.has(perm));
-      if (isAllowed) allowedRoles.push(role.id);
-      // doesn't have permission, check members individually
-      else {
-        role.members.forEach((member) => {
-          // make sure member is not repeated
-          if (seenMembers.includes(member.id)) return;
+    let everyoneRole: Role | undefined = undefined;
 
-          const memberAllowed = command.allowWithPermission?.some((perm) => member.permissions.has(perm));
-          if (memberAllowed) allowedMembers.push(member.id);
+    const aRoles: Snowflake[] = [];
+    const aMembers: Snowflake[] = [];
 
-          seenMembers.push(member.id);
-        });
+    for (const [, role] of roles) {
+      // ensure that @everyone is checked last
+      if (role.name === '@everyone') {
+        everyoneRole = role;
+        continue;
       }
-    });
+
+      const { allowedMembers, allowedRoles } = await syncPermissionForRole(command, role);
+      aMembers.push(...allowedMembers);
+      aRoles.push(...allowedRoles);
+    }
+    if (everyoneRole) await syncPermissionForRole(command, everyoneRole);
 
     // add permissions
-    if (allowedMembers.length || allowedRoles.length) {
-      const commandPerms = allowedMembers
+    if (aMembers.length || aRoles.length) {
+      const commandPerms = aMembers
         .map((id) => {
           return { type: 'USER', id, permission: true };
         })
         .concat(
-          allowedRoles.map((id) => {
+          aRoles.map((id) => {
             return { type: 'ROLE', id, permission: true };
           }),
         ) as ApplicationCommandPermissionData[];
@@ -108,6 +138,30 @@ const syncPermissions = async (guild: Guild, command: SlashCommand, existing: Ap
       await existing.permissions.set({ permissions: commandPerms });
     }
   }
+};
+
+/**
+ * Sync commands of a guild
+ *
+ * @param {Guild} guild The guild to sync
+ */
+export const syncGuildCommands = async (guild: Guild): Promise<void> => {
+  const commands = guild.client.commands;
+  const guildCommands = (commands.get('allGuild') || [])?.concat(commands.get(guild.id) || []);
+
+  await guild.commands.set(guildCommands);
+
+  // sync permission
+  await Promise.all(
+    guildCommands.map(async (com) => {
+      if ('allowWithPermission' in com && com.allowWithPermission?.length) {
+        const registered = guild.commands.cache.find((c) => c.name === com.name);
+
+        if (!registered) return;
+        await syncPermissions(guild, com, registered);
+      }
+    }),
+  );
 };
 
 /**
@@ -127,20 +181,10 @@ export const syncCommands = async (client: Client): Promise<void> => {
   if (global) await syncGlobalCommands(application, global);
 
   // sync guild commands
-  for (const [guildId, guild] of client.guilds.cache) {
-    const guildCommands = (commands.get('allGuild') || [])?.concat(commands.get(guildId) || []);
-    await guild.commands.set(guildCommands);
-    // sync permission
-    await Promise.all(
-      guildCommands.map(async (com) => {
-        if ('allowWithPermission' in com && com.allowWithPermission?.length) {
-          const registered = guild.commands.cache.find((c) => c.name === com.name);
-          if (!registered) return;
-
-          await syncPermissions(guild, com, registered);
-        }
-      }),
-    );
+  const guilds = await client.guilds.fetch();
+  for (const [, g] of guilds) {
+    const guild = await g.fetch();
+    await syncGuildCommands(guild);
   }
 
   logVerbose('Successfully synced commands', client);

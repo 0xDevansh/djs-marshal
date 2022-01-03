@@ -1,4 +1,4 @@
-import { Client } from 'discord.js';
+import { Client, Collection, Snowflake } from 'discord.js';
 import { MarshalOptions } from '../structures/MarshalOptions';
 import { handleInteraction } from './handlers/handleInteraction';
 import { loadCommandsFromDir } from './commands/loadCommandsFromDir';
@@ -6,6 +6,10 @@ import { handleGuildJoin } from './handlers/handleGuildJoin';
 import { handleGuildMemberUpdate } from './handlers/handleGuildMemberUpdate';
 import { loadButtonsFromDir } from './buttons/loadButtonsFromDir';
 import { loadSelectMenusFromDir } from './selectMenus/loadSelectMenusFromDir';
+import { SlashCommand } from '../structures/SlashCommand';
+import { ButtonCommand } from '../structures/ButtonCommand';
+import { SelectMenuCommand } from '../structures/SelectMenuCommand';
+import { syncGuildCommands } from './commands/syncCommands';
 
 /**
  * Create and set up a bot for slash commands
@@ -21,6 +25,10 @@ export const initializeBot = (options: MarshalOptions): Client => {
   client.logLevel = options.logLevel || 'warn';
   client.logStyle = options.logStyle || 'simple';
   client.logMethod = options.logMethod;
+
+  client.commands = new Collection<Snowflake | 'global' | 'allGuild', Array<SlashCommand>>();
+  client.buttons = new Collection<string | RegExp, ButtonCommand>();
+  client.selectMenus = new Collection<string | RegExp, SelectMenuCommand>();
 
   // handle all sorts of interactions
   client.on('interactionCreate', handleInteraction);
@@ -42,6 +50,8 @@ export const initializeBot = (options: MarshalOptions): Client => {
       console.log(message);
     }
   });
+
+  client.on('guildUpdate', (newGuild) => syncGuildCommands(newGuild));
 
   if (options.token) void client.login(options.token);
   return client;
