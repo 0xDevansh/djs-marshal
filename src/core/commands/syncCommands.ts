@@ -10,7 +10,7 @@ import {
 } from 'discord.js';
 import { SlashCommand } from '../../structures/SlashCommand';
 import deepEqual from 'deep-equal';
-import { logVerbose } from '../../utils/logger';
+import { logError, logVerbose } from '../../utils/logger';
 import { toApplicationCommand } from '../../utils/toApplicationCommand';
 
 /**
@@ -149,7 +149,7 @@ export const syncGuildCommands = async (guild: Guild): Promise<void> => {
   const commands = guild.client.commands;
   const guildCommands = (commands.get('allGuild') || [])?.concat(commands.get(guild.id) || []);
 
-  await guild.commands.set(guildCommands);
+  await guild.commands.set(guildCommands).catch((err) => logError(err.toString(), guild.client));
 
   // sync permission
   await Promise.all(
