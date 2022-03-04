@@ -11,6 +11,12 @@ import { loadCommandsFromDir } from '../core/commands/loadCommandsFromDir';
 import { loadButtonsFromDir } from '../core/buttons/loadButtonsFromDir';
 import { loadSelectMenusFromDir } from '../core/selectMenus/loadSelectMenusFromDir';
 import { syncGuildCommands } from '../core/commands/syncCommands';
+import { loadCommands as lCommands } from '../core/commands/loadCommands';
+import { loadCommandsFromDir as lCommandsFromDir } from '../core/commands/loadCommandsFromDir';
+import { loadButtons as lButtons } from '../core/buttons/loadButtons';
+import { loadButtonsFromDir as lButtonsFromDir } from '../core/buttons/loadButtonsFromDir';
+import { loadSelectMenus as lSelectMenus } from '../core/selectMenus/loadSelectMenus';
+import { loadSelectMenusFromDir as lSelectMenusFromDir } from '../core/selectMenus/loadSelectMenusFromDir';
 import * as Discord from 'discord.js';
 
 export class MarshalClient extends Client {
@@ -63,5 +69,29 @@ export class MarshalClient extends Client {
     super.on('guildUpdate', (newGuild) => syncGuildCommands(newGuild));
 
     if (options.token) void super.login(options.token);
+  }
+
+  async loadCommands(commands: SlashCommand[]): Promise<void> {
+    await lCommands(this, commands);
+  }
+
+  async loadCommandsFromDir(dir: string): Promise<void> {
+    await lCommandsFromDir(this, dir);
+  }
+
+  loadButtons(buttons: ButtonCommand[]): void {
+    lButtons(this, buttons);
+  }
+
+  async loadButtonsFromDir(dir: string): Promise<void> {
+    await lButtonsFromDir(this, dir);
+  }
+
+  loadSelectMenus(menus: SelectMenuCommand[]): void {
+    lSelectMenus(this, menus);
+  }
+
+  async loadSelectMenusFromDir(dir: string): Promise<void> {
+    await lSelectMenusFromDir(this, dir);
   }
 }
