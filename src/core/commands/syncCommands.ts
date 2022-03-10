@@ -10,8 +10,38 @@ import {
 } from 'discord.js';
 import { SlashCommand } from '../../structures/SlashCommand';
 import deepEqual from 'deep-equal';
-import { logError, logVerbose } from '../../utils/logger';
+import { logVerbose } from '../../utils/logger';
 import { toApplicationCommand } from '../../utils/toApplicationCommand';
+
+/**
+ * Sets the permissions of a registered ApplicationCommand according to SlashCommand properties
+ *
+ * @param {ApplicationCommand} registered The registered application command
+ * @param {SlashCommand} command The registered slash command
+ */
+const setPermissions = async (registered: ApplicationCommand, command: SlashCommand): Promise<void> => {
+  const permissions: ApplicationCommandPermissionData[] = (command.allowRoles || []).map((id) => {
+    return { id, type: 'ROLE', permission: true };
+  });
+  permissions.push(
+    ...(command.denyRoles || []).map((id) => {
+      return <ApplicationCommandPermissionData>{ id, type: 'ROLE', permission: false };
+    }),
+  );
+  permissions.push(
+    ...(command.allowUsers || []).map((id) => {
+      return <ApplicationCommandPermissionData>{ id, type: 'USER', permission: true };
+    }),
+  );
+  permissions.push(
+    ...(command.denyUsers || []).map((id) => {
+      return <ApplicationCommandPermissionData>{ id, type: 'USER', permission: false };
+    }),
+  );
+  console.log(`Syncing perms for ${command.name}`);
+
+  await registered.permissions.set({ permissions });
+};
 
 /**
  * Compares and syncs global commands if needed
@@ -30,15 +60,16 @@ const syncGlobalCommands = async (application: ClientApplication, newCommands: S
     // command is new
     if (!matching) {
       logVerbose(`Syncing new global command: ${command.name}`, application.client);
-      await application.commands.create(command);
-      console.log('created');
+      const registered = await application.commands.create(command);
+      await setPermissions(registered, command);
       continue;
     }
 
     // command has changed
     if (!deepEqual(matching, toApplicationCommand(command))) {
       logVerbose(`Syncing changed global command: ${command.name}`, application.client);
-      await application.commands.create(command);
+      const registered = await application.commands.create(command);
+      await setPermissions(registered, command);
     }
 
     // finally, remove from synced commands
@@ -90,6 +121,8 @@ const syncPermissionForRole = async (
  * @param guild The guild in which command should be checked
  * @param command The SlashCommand to be checked
  * @param existing The existing ApplicationCommand in guild
+ *
+ * @deprecated buggy and not recommended
  */
 export const syncPermissions = async (
   guild: Guild,
@@ -149,7 +182,11 @@ export const syncGuildCommands = async (guild: Guild): Promise<void> => {
   const commands = guild.client.commands;
   const guildCommands = (commands.get('allGuild') || [])?.concat(commands.get(guild.id) || []);
 
-  await guild.commands.set(guildCommands).catch((err) => logError(err.toString(), guild.client));
+  await guild.commands.set([]);
+  for (const command of guildCommands) {
+    const registered = await guild.commands.create(command);
+    await setPermissions(registered, command);
+  }
 
   // sync permission
   await Promise.all(
