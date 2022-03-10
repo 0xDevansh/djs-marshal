@@ -19,6 +19,11 @@ export type BaseSlashCommand = ChatInputApplicationCommandData & {
     deferEphemeral?: boolean;
   };
   allowWithPermission?: PermissionString[];
+
+  /**
+   * Send an error embed if there is an unhandled exception (default: true)
+   */
+  handleError?: boolean;
 };
 
 /**

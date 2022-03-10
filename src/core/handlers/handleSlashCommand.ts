@@ -22,11 +22,30 @@ export const handleSlashCommand = async (int: CommandInteraction, client: Client
   // finally, execute command
   try {
     foundCommand.execute(int);
-  } catch (err) {
-    if (int.deferred || int.replied) {
-      await int.editReply('err');
-    } else {
-      await int.reply('err');
+  } catch (err: any) {
+    if (foundCommand.handleError) {
+      if (int.deferred || int.replied) {
+        await int.editReply({
+          embeds: [
+            {
+              title: 'There was an error while executing the command',
+              description: err.message,
+              color: 'RED',
+            },
+          ],
+        });
+      } else {
+        await int.reply({
+          ephemeral: true,
+          embeds: [
+            {
+              title: 'There was an error while executing the command',
+              description: err.message,
+              color: 'RED',
+            },
+          ],
+        });
+      }
     }
   }
 };
