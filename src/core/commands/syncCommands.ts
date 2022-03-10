@@ -10,7 +10,7 @@ import {
 } from 'discord.js';
 import { SlashCommand } from '../../structures/SlashCommand';
 import deepEqual from 'deep-equal';
-import { logError, logVerbose } from '../../utils/logger';
+import { logVerbose } from '../../utils/logger';
 import { toApplicationCommand } from '../../utils/toApplicationCommand';
 
 /**
@@ -60,15 +60,16 @@ const syncGlobalCommands = async (application: ClientApplication, newCommands: S
     // command is new
     if (!matching) {
       logVerbose(`Syncing new global command: ${command.name}`, application.client);
-      await application.commands.create(command);
-      console.log('created');
+      const registered = await application.commands.create(command);
+      await setPermissions(registered, command);
       continue;
     }
 
     // command has changed
     if (!deepEqual(matching, toApplicationCommand(command))) {
       logVerbose(`Syncing changed global command: ${command.name}`, application.client);
-      await application.commands.create(command);
+      const registered = await application.commands.create(command);
+      await setPermissions(registered, command);
     }
 
     // finally, remove from synced commands
@@ -179,7 +180,10 @@ export const syncGuildCommands = async (guild: Guild): Promise<void> => {
   const commands = guild.client.commands;
   const guildCommands = (commands.get('allGuild') || [])?.concat(commands.get(guild.id) || []);
 
-  await guild.commands.set(guildCommands).catch((err) => logError(err.toString(), guild.client));
+  for (const command of guildCommands) {
+    const registered = await guild.commands.create(command);
+    await setPermissions(registered, command);
+  }
 
   // sync permission
   await Promise.all(
