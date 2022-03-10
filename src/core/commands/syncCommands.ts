@@ -10,7 +10,7 @@ import {
 } from 'discord.js';
 import { SlashCommand } from '../../structures/SlashCommand';
 import deepEqual from 'deep-equal';
-import { logVerbose } from '../../utils/logger';
+import { logError, logVerbose } from '../../utils/logger';
 import { toApplicationCommand } from '../../utils/toApplicationCommand';
 
 /**
@@ -60,16 +60,15 @@ const syncGlobalCommands = async (application: ClientApplication, newCommands: S
     // command is new
     if (!matching) {
       logVerbose(`Syncing new global command: ${command.name}`, application.client);
-      const registered = await application.commands.create(command);
-      await setPermissions(registered, command);
+      await application.commands.create(command);
+      console.log('created');
       continue;
     }
 
     // command has changed
     if (!deepEqual(matching, toApplicationCommand(command))) {
       logVerbose(`Syncing changed global command: ${command.name}`, application.client);
-      const registered = await application.commands.create(command);
-      await setPermissions(registered, command);
+      await application.commands.create(command);
     }
 
     // finally, remove from synced commands
@@ -121,8 +120,6 @@ const syncPermissionForRole = async (
  * @param guild The guild in which command should be checked
  * @param command The SlashCommand to be checked
  * @param existing The existing ApplicationCommand in guild
- *
- * @deprecated buggy and not recommended
  */
 export const syncPermissions = async (
   guild: Guild,
@@ -182,11 +179,7 @@ export const syncGuildCommands = async (guild: Guild): Promise<void> => {
   const commands = guild.client.commands;
   const guildCommands = (commands.get('allGuild') || [])?.concat(commands.get(guild.id) || []);
 
-  await guild.commands.set([]);
-  for (const command of guildCommands) {
-    const registered = await guild.commands.create(command);
-    await setPermissions(registered, command);
-  }
+  await guild.commands.set(guildCommands).catch((err) => logError(err.toString(), guild.client));
 
   // sync permission
   await Promise.all(
