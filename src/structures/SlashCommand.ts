@@ -1,4 +1,11 @@
-import { ChatInputApplicationCommandData, CommandInteraction, PermissionString, Snowflake } from 'discord.js';
+import {
+  ChatInputApplicationCommandData,
+  CommandInteraction,
+  PermissionString,
+  RoleResolvable,
+  Snowflake,
+  UserResolvable,
+} from 'discord.js';
 
 /**
  * The base options present in all types of SlashCommand
@@ -27,6 +34,24 @@ export type BaseSlashCommand = ChatInputApplicationCommandData & {
    * Send an error embed if there is an unhandled exception (default: true)
    */
   handleError?: boolean;
+
+  /**
+   * Allow access to these roles
+   */
+  allowRoles?: RoleResolvable[];
+  /**
+   * Do not allow access to these roles
+   */
+  denyRoles?: RoleResolvable[];
+
+  /**
+   * Allow access to these users
+   */
+  allowUsers?: UserResolvable[];
+  /**
+   * Do not allow access to these users
+   */
+  denyUsers?: UserResolvable[];
 };
 
 /**
