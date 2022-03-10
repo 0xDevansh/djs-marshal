@@ -1,15 +1,13 @@
 
 # djs-marshal
 
-![npm](https://img.shields.io/npm/v/djs-marshal?style=for-the-badge)
-![downloads](https://img.shields.io/npm/dm/djs-marshal?style=for-the-badge)
-![discord](https://img.shields.io/discord/873232757508157470?color=5865F2&label=discord&style=for-the-badge)
+[![npm](https://img.shields.io/npm/v/djs-marshal?style=for-the-badge)](https://www.npmjs.com/package/djs-marshal)
+[![downloads](https://img.shields.io/npm/dm/djs-marshal?style=for-the-badge)](https://www.npmjs.com/package/djs-marshal)
+[![discord](https://img.shields.io/discord/873232757508157470?color=5865F2&label=discord&style=for-the-badge)](https://discord.gg/qJnrRvt7wW)
 
 A lightweight command handler for discord.js interactions
 
 > This package requires discord.js v13 or higher to be installed
-
-[**Technical documentation**](https://deathvenom54.github.io/djs-marshal): Refer this because I am too lazy to write documentation
 
 ## Installation
 
@@ -22,6 +20,10 @@ yarn add djs-marshal
 # this package also requires discord.js
 npm install discord.js --save
 ```
+
+## Documentation
+
+You can find the full documentation [here](https://deathvenom54.github.io/djs-marshal)
 
 ## Setup
 
