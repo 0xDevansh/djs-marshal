@@ -18,8 +18,17 @@ export const handleSlashCommand = async (int: CommandInteraction, client: Client
   // defer
   if (foundCommand.beforeExecute?.deferEphemeral) await int.deferReply({ ephemeral: true });
   else if (foundCommand.beforeExecute?.defer) await int.deferReply();
+
   // finally, execute command
-  foundCommand.execute(int);
+  try {
+    foundCommand.execute(int);
+  } catch (err) {
+    if (int.deferred || int.replied) {
+      await int.editReply('err');
+    } else {
+      await int.reply('err');
+    }
+  }
 };
 
 import { Client, CommandInteraction } from 'discord.js';
