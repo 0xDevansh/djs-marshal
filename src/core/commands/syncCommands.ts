@@ -14,6 +14,36 @@ import { logVerbose } from '../../utils/logger';
 import { toApplicationCommand } from '../../utils/toApplicationCommand';
 
 /**
+ * Sets the permissions of a registered ApplicationCommand according to SlashCommand properties
+ *
+ * @param {ApplicationCommand} registered The registered application command
+ * @param {SlashCommand} command The registered slash command
+ */
+const setPermissions = async (registered: ApplicationCommand, command: SlashCommand): Promise<void> => {
+  const permissions: ApplicationCommandPermissionData[] = (command.allowRoles || []).map((id) => {
+    return { id, type: 'ROLE', permission: true };
+  });
+  permissions.push(
+    ...(command.denyRoles || []).map((id) => {
+      return <ApplicationCommandPermissionData>{ id, type: 'ROLE', permission: false };
+    }),
+  );
+  permissions.push(
+    ...(command.allowUsers || []).map((id) => {
+      return <ApplicationCommandPermissionData>{ id, type: 'USER', permission: true };
+    }),
+  );
+  permissions.push(
+    ...(command.denyUsers || []).map((id) => {
+      return <ApplicationCommandPermissionData>{ id, type: 'USER', permission: false };
+    }),
+  );
+  console.log(`Syncing perms for ${command.name}`);
+
+  await registered.permissions.set({ permissions });
+};
+
+/**
  * Compares and syncs global commands if needed
  *
  * @param application The client's application (client.application)
@@ -30,15 +60,16 @@ const syncGlobalCommands = async (application: ClientApplication, newCommands: S
     // command is new
     if (!matching) {
       logVerbose(`Syncing new global command: ${command.name}`, application.client);
-      await application.commands.create(command);
-      console.log('created');
+      const registered = await application.commands.create(command);
+      await setPermissions(registered, command);
       continue;
     }
 
     // command has changed
     if (!deepEqual(matching, toApplicationCommand(command))) {
       logVerbose(`Syncing changed global command: ${command.name}`, application.client);
-      await application.commands.create(command);
+      const registered = await application.commands.create(command);
+      await setPermissions(registered, command);
     }
 
     // finally, remove from synced commands
@@ -149,7 +180,10 @@ export const syncGuildCommands = async (guild: Guild): Promise<void> => {
   const commands = guild.client.commands;
   const guildCommands = (commands.get('allGuild') || [])?.concat(commands.get(guild.id) || []);
 
-  await guild.commands.set(guildCommands);
+  for (const command of guildCommands) {
+    const registered = await guild.commands.create(command);
+    await setPermissions(registered, command);
+  }
 
   // sync permission
   await Promise.all(

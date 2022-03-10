@@ -18,7 +18,33 @@ export type BaseSlashCommand = ChatInputApplicationCommandData & {
     /** defer the reply as ephemeral before executing */
     deferEphemeral?: boolean;
   };
+  /**
+   * @deprecated this is very buggy and thus not recommended for use
+   */
   allowWithPermission?: PermissionString[];
+
+  /**
+   * Send an error embed if there is an unhandled exception (default: true)
+   */
+  handleError?: boolean;
+
+  /**
+   * Allow access to these roles
+   */
+  allowRoles?: Snowflake[];
+  /**
+   * Do not allow access to these roles
+   */
+  denyRoles?: Snowflake[];
+
+  /**
+   * Allow access to these users
+   */
+  allowUsers?: Snowflake[];
+  /**
+   * Do not allow access to these users
+   */
+  denyUsers?: Snowflake[];
 };
 
 /**

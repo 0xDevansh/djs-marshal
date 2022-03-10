@@ -24,6 +24,7 @@ export const loadCommands = async (client: Client, commands: SlashCommand[]): Pr
 
     if (!command.type) command.type = 'CHAT_INPUT';
     if (!command.defaultPermission) command.defaultPermission = true;
+    if (command.handleError === undefined) command.handleError = true;
     if ('allowWithPermission' in command) command.defaultPermission = !command.allowWithPermission?.length;
 
     // is guild command
