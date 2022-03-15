@@ -39,6 +39,8 @@ const setPermissions = async (registered: ApplicationCommand, command: SlashComm
     }),
   );
 
+  if (!permissions.length) return;
+
   await registered.permissions.set({ permissions });
 };
 
@@ -49,6 +51,7 @@ const setPermissions = async (registered: ApplicationCommand, command: SlashComm
  * @param {SlashCommand[]} newCommands The commands to sync
  */
 const syncGlobalCommands = async (application: ClientApplication, newCommands: SlashCommand[]): Promise<void> => {
+  logVerbose('Syncing global commands', application.client);
   const currentCommands = await application.commands.fetch();
   const cc = currentCommands.map((c) => toApplicationCommand(c));
 
@@ -59,20 +62,20 @@ const syncGlobalCommands = async (application: ClientApplication, newCommands: S
     // command is new
     if (!matching) {
       logVerbose(`Syncing new global command: ${command.name}`, application.client);
-      const registered = await application.commands.create(command);
-      await setPermissions(registered, command);
+      await application.commands.create(command);
+      logVerbose(`    ✅ ${command.name}`, application.client);
       continue;
     }
 
     // command has changed
     if (!deepEqual(matching, toApplicationCommand(command))) {
       logVerbose(`Syncing changed global command: ${command.name}`, application.client);
-      const registered = await application.commands.create(command);
-      await setPermissions(registered, command);
+      await application.commands.create(command);
     }
 
     // finally, remove from synced commands
     cc.splice(cc.indexOf(matching), 1);
+    logVerbose(`    ✅ ${command.name}`, application.client);
   }
 
   // delete left over commands
@@ -215,6 +218,7 @@ export const syncCommands = async (client: Client): Promise<void> => {
   if (global) await syncGlobalCommands(application, global);
 
   // sync guild commands
+  logVerbose(`Syncing guild commands`, client);
   const guilds = await client.guilds.fetch();
   for (const [, g] of guilds) {
     const guild = await g.fetch();
