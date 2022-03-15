@@ -1,6 +1,6 @@
 import { ButtonCommand } from '../../structures/ButtonCommand';
 import { Client, Collection } from 'discord.js';
-import { logWarning } from '../../utils/logger';
+import { logVerbose, logWarning } from '../../utils/logger';
 
 /**
  * Loads the buttons provided into client.buttons
@@ -9,6 +9,7 @@ import { logWarning } from '../../utils/logger';
  * @param {ButtonCommand[]} buttons The buttons to load
  */
 export const loadButtons = (client: Client, buttons: ButtonCommand[]): void => {
+  logVerbose('Loading buttons', client);
   const buttonCollection = new Collection<string | RegExp, ButtonCommand>();
 
   buttons.forEach((button) => {
@@ -22,6 +23,7 @@ export const loadButtons = (client: Client, buttons: ButtonCommand[]): void => {
     }
 
     buttonCollection.set(button.customId, button);
+    logVerbose(`    ✅ ${button.customId}`, client);
   });
 
   client.buttons = buttonCollection;

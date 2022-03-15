@@ -15,6 +15,7 @@ export const loadCommands = async (client: Client, commands: SlashCommand[]): Pr
   commandsCollection.set('global', []);
   commandsCollection.set('allGuild', []);
 
+  logVerbose('Loading commands', client);
   commands.forEach((command) => {
     // preload checks
     if (command.beforeExecute?.defer && command.beforeExecute?.deferEphemeral)
@@ -38,9 +39,10 @@ export const loadCommands = async (client: Client, commands: SlashCommand[]): Pr
       commandsCollection.get('global')?.push(command);
     }
 
-    logVerbose(`Loaded command ${command.name}`, client);
+    logVerbose(`    ✅ ${command.name}`, client);
   });
 
   client.commands = commandsCollection;
+  logVerbose('Loaded all commands', client);
   await syncCommands(client).catch((err) => logError(err, client));
 };
