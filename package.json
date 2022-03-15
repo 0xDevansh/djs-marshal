@@ -1,12 +1,13 @@
 {
   "name": "djs-marshal",
   "description": "A simple slash command manager for typescript",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/DeathVenom54/djs-marshal.git",
   "author": "Deathvenom54 <fdragon602@gmail.com>",
   "license": "MIT",
+  "keywords": ["discord", "discord.js", "slash", "command", "interaction"],
   "scripts": {
     "build": "tsc",
     "test": "node dist/testing/test.js",
