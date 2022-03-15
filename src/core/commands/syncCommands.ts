@@ -38,7 +38,6 @@ const setPermissions = async (registered: ApplicationCommand, command: SlashComm
       return <ApplicationCommandPermissionData>{ id, type: 'USER', permission: false };
     }),
   );
-  console.log(`Syncing perms for ${command.name}`);
 
   await registered.permissions.set({ permissions });
 };
@@ -180,6 +179,7 @@ export const syncGuildCommands = async (guild: Guild): Promise<void> => {
   const commands = guild.client.commands;
   const guildCommands = (commands.get('allGuild') || [])?.concat(commands.get(guild.id) || []);
 
+  await guild.commands.set([]);
   for (const command of guildCommands) {
     const registered = await guild.commands.create(command);
     await setPermissions(registered, command);
