@@ -123,6 +123,8 @@ const syncPermissionForRole = async (
  * @param guild The guild in which command should be checked
  * @param command The SlashCommand to be checked
  * @param existing The existing ApplicationCommand in guild
+ *
+ * @deprecated Buggy and resource heavy, use allowRoles, denyRoles, allowUsers and denyUsers
  */
 export const syncPermissions = async (
   guild: Guild,

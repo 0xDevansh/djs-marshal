@@ -19,7 +19,7 @@ export type BaseSlashCommand = ChatInputApplicationCommandData & {
     deferEphemeral?: boolean;
   };
   /**
-   * @deprecated this is very buggy and thus not recommended for use
+   * @deprecated Buggy and resource heavy, use allowRoles, denyRoles, allowUsers and denyUsers
    */
   allowWithPermission?: PermissionString[];
 
