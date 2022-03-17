@@ -39,9 +39,7 @@ const setPermissions = async (registered: ApplicationCommand, command: SlashComm
     }),
   );
 
-  if (!permissions.length) return;
-
-  await registered.permissions.set({ permissions });
+  if (permissions.length) await registered.permissions.set({ permissions });
 };
 
 /**
@@ -123,6 +121,8 @@ const syncPermissionForRole = async (
  * @param guild The guild in which command should be checked
  * @param command The SlashCommand to be checked
  * @param existing The existing ApplicationCommand in guild
+ *
+ * @deprecated Buggy and resource heavy, use allowRoles, denyRoles, allowUsers and denyUsers
  */
 export const syncPermissions = async (
   guild: Guild,
@@ -183,7 +183,19 @@ export const syncGuildCommands = async (guild: Guild): Promise<void> => {
   const guildCommands = (commands.get('allGuild') || [])?.concat(commands.get(guild.id) || []);
 
   await guild.commands.set([]);
-  for (const command of guildCommands) {
+
+  const withoutPerms: SlashCommand[] = [];
+  const withPerms: SlashCommand[] = [];
+
+  guildCommands.forEach((c) => {
+    if (c.allowRoles?.length || c.denyRoles?.length || c.allowUsers?.length || c.denyUsers?.length) {
+      withPerms.push(c);
+    } else {
+      withoutPerms.push(c);
+    }
+  });
+  await guild.commands.set(withoutPerms);
+  for (const command of withPerms) {
     const registered = await guild.commands.create(command);
     await setPermissions(registered, command);
   }
