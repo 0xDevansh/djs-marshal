@@ -41,6 +41,10 @@ import path from 'path';
 const client = Marshal.initializeBot({
   // the path where slash commands are stored
   slashCommandsPath: path.join(__dirname, 'commands'),
+  // the path where buttons are stored
+  buttonsPath: path.join(__dirname, 'commands'),
+  // the path where select menus are stored
+  selectMenusPath: path.join(__dirname, 'commands'),
   // (optional) message to log on ready event
   readyMessage: 'Logged in as {tag}',
   // (optional) bot's token, will login if provided
@@ -55,34 +59,6 @@ const client = Marshal.initializeBot({
 // client.login(process.env.BOT_TOKEN);
 ```
 
-
-### Doing it yourself
-
-I don't recommend this, but if you want to, by all means you can set it up yourself.
-
-```ts
-import Marshal from './src/index';
-import Discord from 'discord.js';
-import path from 'path';
-
-const client = new Discord.Client();
-
-// load commands
-Marshal.loadCommandsFromDir(path.join(__dirame, 'commands'));
-
-// some parameters
-client.logLevel = 'warn';
-client.logStyle = 'simple';
-
-// handlers
-client.on('interactionCreate', Marshal.handlers.handleInteraction);
-client.on('guildAdd', Marshal.handlers.handleGuildJoin);
-// add this only if you have a command with allowWithPermission
-client.on('guildMemberUpdate', Marshal.handlers.handleGuildMemberUpdate);
-
-client.login(process.env.BOT_TOKEN);
-```
-
 ## Slash Commands
 
 Now in your commands' folder, you can start creating command files!
@@ -91,31 +67,29 @@ Now in your commands' folder, you can start creating command files!
 
 ```ts
 // ping.js|ts
-import { SlashCommand } from "djs-marshal";
+import { defineSlashCommand } from 'djs-marshal';
 
 // a pretty basic command. command is a discord.js
 // CommandInteraction and you can use its methods like
 // reply, defer, editReply, etc.
-const ping: SlashCommand = {
+export default defineSlashCommmand({
   name: 'ping',
   description: 'Play ping-pong with me',
   commandType: 'global',
   execute (command) {
     command.reply('Pong!')
   }
-};
-
-export default ping;
+});
 // https://deathvenom54.github.io/djs-marshal/modules.html#SlashCommand
 ```
 
 ```ts
 // guildPing.js|ts
-import { SlashCommand } from "djs-marshal";
+import { defineSlashCommand } from 'djs-marshal';
 
 // any command with a guildId specified is registered as
 // as a guild command and will only work in that guild
-const guildPing: SlashCommand = {
+export default defineSlashCommand({
   name: 'guildping',
   description: 'Play ping-pong with me in this server',
   commandType: 'guild',
@@ -123,37 +97,35 @@ const guildPing: SlashCommand = {
   execute (command) {
     command.reply('Peng!');
   }
-};
-
-export default guildPing;
+});
 ```
 
 ```ts
 // deferredPing.js|ts
-import { SlashCommand } from "djs-marshal";
+import { defineSlashCommand } from 'djs-marshal';
 
-// you can pass in defer as true to defer the interaction beforehand
-const deferredPing: SlashCommand = {
+// you can pass in beforeExecute.defer as true to defer the interaction beforehand
+export default defineSlashCommand({
   name: 'slothping',
   description: 'piiiiiinnnnnng',
   commandType: 'global',
-  // you can also use deferEphemeral to mark the reply ephemeral
-  defer: true,
+  beforeExecute: {
+    // you can also use deferEphemeral to mark the reply ephemeral
+    defer: true,
+  },
   execute (command) {
     setInterval(() =>{
       command.editReply('Pooooooonnnngg!');
     }, 3000)
   }
-};
-
-export default deferredPing;
+});
 ```
 
 ```ts
 // secret.js|ts
-import { SlashCommand } from "djs-marshal";
+import { defineSlashCommand } from 'djs-marshal';
 
-const secret: SlashCommand = {
+export default defineSlashCommand({
   name: 'secret',
   description: 'Only for server moderators',
   // this command is registered in all the
@@ -165,9 +137,49 @@ const secret: SlashCommand = {
   async execute (command) {
     command.reply('Secret moderators stuff')
   }
-};
+});
+```
 
-export default secret;
+## Buttons
+
+In your defined buttons directory, you can create message button interceptors in a similar manner to slash commands
+
+```ts
+import { defineButtonCommand } from 'djs-marshal';
+
+export default defineButtonCommand({
+  // can also be a regex, like /button-\d+/
+  customId: 'my-button',
+  // you can specify beforeExecute options 
+  // just like in slash commands
+  beforeExecute: {
+    deferEphemeral: true
+  },
+  async execute(int) {
+    await int.editReply('Beep boop!')
+  }
+});
+```
+
+## Select Menus
+
+In your defined select menus' directory, you can create select menu interceptors in a similar manner to slash commands
+
+```ts
+import { defineSelectMenuCommand } from 'djs-marshal';
+
+export default defineSelectMenuCommand({
+  // can also be a regex, like /menu-\d+/
+  customId: 'my-menu',
+  // you can specify beforeExecute options 
+  // just like in slash commands
+  beforeExecute: {
+    deferEphemeral: true
+  },
+  async execute(int) {
+    await int.editReply('Thank you, we have noted your choice!')
+  }
+});
 ```
 
 ## Contributing

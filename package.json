@@ -1,38 +1,45 @@
 {
   "name": "djs-marshal",
   "description": "A simple slash command manager for typescript",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/DeathVenom54/djs-marshal.git",
   "author": "Deathvenom54 <fdragon602@gmail.com>",
   "license": "MIT",
-  "keywords": ["discord", "discord.js", "slash", "command", "interaction"],
+  "keywords": [
+    "discord",
+    "discord.js",
+    "slash",
+    "command",
+    "interaction"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "node dist/testing/test.js",
     "dev": "tsc -W",
     "lint": "eslint src/** --fix",
-    "docs": "typedoc"
+    "docs": "typedoc --plugin ./node_modules/typedoc-theme-hierarchy/dist/index.js"
   },
   "peerDependencies": {
-    "discord.js": ">=13.2.x"
+    "discord.js": ">=13.x.x"
   },
   "devDependencies": {
     "@types/chalk": "^2.2.0",
     "@types/deep-equal": "^1.0.1",
-    "@typescript-eslint/eslint-plugin": "^4.30.0",
-    "@typescript-eslint/parser": "^4.30.0",
-    "discord.js": "^13.1.0",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
+    "@typescript-eslint/eslint-plugin": "^5.21.0",
+    "@typescript-eslint/parser": "^5.21.0",
+    "discord.js": "^13.6.0",
+    "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "prettier": "^2.3.2",
-    "typedoc": "^0.22.9",
-    "typescript": "^4.4.2"
+    "prettier": "^2.6.2",
+    "typedoc": "^0.22.15",
+    "typedoc-theme-hierarchy": "^1.1.1",
+    "typescript": "^4.6.4"
   },
   "dependencies": {
-    "chalk": "^4.1.2",
+    "chalk": "^5.0.1",
     "deep-equal": "^2.0.5"
   }
 }
