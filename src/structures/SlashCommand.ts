@@ -45,6 +45,8 @@ export type BaseSlashCommand = ChatInputApplicationCommandData & {
    * Do not allow access to these users
    */
   denyUsers?: Snowflake[];
+
+  commandType: string;
 };
 
 /**

@@ -32,6 +32,9 @@ export * from './core/handlers/handleGuildMemberUpdate';
 
 export * from './core/commands/syncCommands';
 
+export * from './core/definers/defineSlashCommand'
+import {defineSlashCommand} from "./core/definers/defineSlashCommand";
+
 const handlers = {
   handleInteraction,
   handleGuildJoin,
@@ -40,11 +43,15 @@ const handlers = {
 
 export default {
   initializeBot,
+
   loadCommands,
   loadCommandsFromDir,
   loadButtons,
   loadButtonsFromDir,
-  loadSelectMenusFromDir,
   loadSelectMenus,
+  loadSelectMenusFromDir,
+
   handlers,
+
+  defineSlashCommand
 };
