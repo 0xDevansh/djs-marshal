@@ -1,7 +1,7 @@
 {
   "name": "djs-marshal",
   "description": "A simple slash command manager for typescript",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/DeathVenom54/djs-marshal.git",
@@ -19,7 +19,7 @@
     "test": "node dist/testing/test.js",
     "dev": "tsc -W",
     "lint": "eslint src/** --fix",
-    "docs": "typedoc"
+    "docs": "typedoc --plugin ./node_modules/typedoc-theme-hierarchy/dist/index.js"
   },
   "peerDependencies": {
     "discord.js": ">=13.x.x"
@@ -35,6 +35,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.6.2",
     "typedoc": "^0.22.15",
+    "typedoc-theme-hierarchy": "^1.1.1",
     "typescript": "^4.6.4"
   },
   "dependencies": {
