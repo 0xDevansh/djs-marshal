@@ -51,7 +51,7 @@ const setPermissions = async (registered: ApplicationCommand, command: SlashComm
 const syncGlobalCommands = async (application: ClientApplication, newCommands: SlashCommand[]): Promise<void> => {
   logVerbose('Syncing global commands', application.client);
   const currentCommands = await application.commands.fetch();
-  const cc = currentCommands.map((c) => toApplicationCommand(c));
+  const cc = [...currentCommands.values()];
 
   for (const command of newCommands) {
     if (!command.options?.length) command.options = [];
@@ -68,7 +68,7 @@ const syncGlobalCommands = async (application: ClientApplication, newCommands: S
     // command has changed
     if (!deepEqual(matching, toApplicationCommand(command))) {
       logVerbose(`Syncing changed global command: ${command.name}`, application.client);
-      await application.commands.create(command);
+      await application.commands.edit(matching.id, command);
     }
 
     // finally, remove from synced commands
