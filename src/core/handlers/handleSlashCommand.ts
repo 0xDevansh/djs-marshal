@@ -30,7 +30,7 @@ export const handleSlashCommand = async (int: CommandInteraction, client: Client
             {
               title: 'There was an error while executing the command',
               description: err.message,
-              color: 'RED',
+              color: Colors.Red,
             },
           ],
         });
@@ -41,7 +41,7 @@ export const handleSlashCommand = async (int: CommandInteraction, client: Client
             {
               title: 'There was an error while executing the command',
               description: err.message,
-              color: 'RED',
+              color: Colors.Red,
             },
           ],
         });
@@ -50,4 +50,4 @@ export const handleSlashCommand = async (int: CommandInteraction, client: Client
   }
 };
 
-import { Client, CommandInteraction } from 'discord.js';
+import { Client, Colors, CommandInteraction } from 'discord.js';

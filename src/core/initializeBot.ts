@@ -3,7 +3,6 @@ import { MarshalOptions } from '../structures/MarshalOptions';
 import { handleInteraction } from './handlers/handleInteraction';
 import { loadCommandsFromDir } from './commands/loadCommandsFromDir';
 import { handleGuildJoin } from './handlers/handleGuildJoin';
-import { handleGuildMemberUpdate } from './handlers/handleGuildMemberUpdate';
 import { loadButtonsFromDir } from './buttons/loadButtonsFromDir';
 import { loadSelectMenusFromDir } from './selectMenus/loadSelectMenusFromDir';
 import { SlashCommand } from '../structures/SlashCommand';
@@ -34,7 +33,6 @@ export const initializeBot = (options: MarshalOptions): Client => {
   client.on('interactionCreate', handleInteraction);
 
   client.on('guildCreate', handleGuildJoin);
-  client.on('guildMemberUpdate', handleGuildMemberUpdate);
 
   client.on('ready', () => {
     // load commands, buttons and select menus

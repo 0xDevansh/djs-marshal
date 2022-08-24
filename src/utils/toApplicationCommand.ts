@@ -11,6 +11,5 @@ export const toApplicationCommand = (command: SlashCommand | ApplicationCommand)
     description: command.description,
     type: command.type,
     options: command.options,
-    defaultPermission: command.defaultPermission,
   };
 };

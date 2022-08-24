@@ -1,4 +1,4 @@
-import { ChatInputApplicationCommandData, CommandInteraction, PermissionString, Snowflake } from 'discord.js';
+import { ChatInputApplicationCommandData, CommandInteraction, Snowflake } from 'discord.js';
 
 /**
  * The base options present in all types of SlashCommand
@@ -18,33 +18,11 @@ export type BaseSlashCommand = ChatInputApplicationCommandData & {
     /** defer the reply as ephemeral before executing */
     deferEphemeral?: boolean;
   };
-  /**
-   * @deprecated Buggy and resource heavy, use allowRoles, denyRoles, allowUsers and denyUsers
-   */
-  allowWithPermission?: PermissionString[];
 
   /**
    * Send an error embed if there is an unhandled exception (default: true)
    */
   handleError?: boolean;
-
-  /**
-   * Allow access to these roles
-   */
-  allowRoles?: Snowflake[];
-  /**
-   * Do not allow access to these roles
-   */
-  denyRoles?: Snowflake[];
-
-  /**
-   * Allow access to these users
-   */
-  allowUsers?: Snowflake[];
-  /**
-   * Do not allow access to these users
-   */
-  denyUsers?: Snowflake[];
 
   commandType: string;
 };

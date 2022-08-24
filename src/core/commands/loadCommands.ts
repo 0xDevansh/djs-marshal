@@ -1,5 +1,5 @@
 import { SlashCommand } from '../../structures/SlashCommand';
-import { Client, Collection, Snowflake } from 'discord.js';
+import { Client, Collection, Snowflake, ApplicationCommandType } from 'discord.js';
 import { syncCommands } from './syncCommands';
 import { logWarning, logVerbose, logError } from '../../utils/logger';
 
@@ -20,13 +20,9 @@ export const loadCommands = async (client: Client, commands: SlashCommand[]): Pr
     // preload checks
     if (command.beforeExecute?.defer && command.beforeExecute?.deferEphemeral)
       logWarning(`defer and deferEphemeral are both true for command ${command.name}`, client);
-    if ('allowWithPermission' in command && command.allowWithPermission === [])
-      logWarning(`allowWithPermission is [] for ${command.name}, it will be ignored`, client);
 
-    if (!command.type) command.type = 'CHAT_INPUT';
-    if (!command.defaultPermission) command.defaultPermission = true;
+    if (!command.type) command.type = ApplicationCommandType.ChatInput;
     if (command.handleError === undefined) command.handleError = true;
-    if ('allowWithPermission' in command) command.defaultPermission = !command.allowWithPermission?.length;
 
     // is guild command
     if (command.commandType === 'guild' && command.guildId) {
