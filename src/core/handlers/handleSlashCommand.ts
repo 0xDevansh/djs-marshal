@@ -5,7 +5,6 @@
  * @param {Client} client The client where the commands are stored
  * @param {string | undefined} guildId The guildId, if command is from a guild
  */
-import { logWarning } from '../../utils/logger';
 
 export const handleSlashCommand = async (int: CommandInteraction, client: Client, guildId?: string): Promise<void> => {
   // find command
@@ -13,7 +12,8 @@ export const handleSlashCommand = async (int: CommandInteraction, client: Client
     .concat(client.commands.get('allGuild') || [])
     .find((c) => c.name === int.commandName);
   if (!foundCommand && guildId) foundCommand = client.commands.get(guildId)?.find((c) => c.name === int.commandName);
-  if (!foundCommand) return logWarning(`Received interaction named ${int.commandName} but command not found`, client);
+  if (!foundCommand)
+    return client.logMethod(`Received interaction named ${int.commandName} but command not found`, 'warn');
 
   // defer
   if (foundCommand.beforeExecute?.deferEphemeral) await int.deferReply({ ephemeral: true });

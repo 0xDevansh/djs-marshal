@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js';
 import { SlashCommand } from '../../structures/SlashCommand';
-import { logLevel, logStyle } from '../../structures/logging';
+import { logLevel } from '../../structures/logging';
 import { ButtonCommand } from '../../structures/ButtonCommand';
 import { SelectMenuCommand } from '../../structures/SelectMenuCommand';
 
@@ -11,8 +11,6 @@ declare module 'discord.js' {
     commands: Discord.Collection<Discord.Snowflake | 'global' | 'allGuild', Array<SlashCommand>>;
     buttons: Discord.Collection<string | RegExp, ButtonCommand>;
     selectMenus: Discord.Collection<string | RegExp, SelectMenuCommand>;
-    logLevel: logLevel;
-    logStyle: logStyle;
-    logMethod?: (message: string, level: logLevel) => void;
+    logMethod: (message: string, level: logLevel) => void;
   }
 }

@@ -1,7 +1,6 @@
 import { Client, ClientApplication, Guild } from 'discord.js';
 import { SlashCommand } from '../../structures/SlashCommand';
 import deepEqual from 'deep-equal';
-import { logVerbose } from '../../utils/logger';
 import { toApplicationCommand } from '../../utils/toApplicationCommand';
 
 /**
@@ -11,7 +10,7 @@ import { toApplicationCommand } from '../../utils/toApplicationCommand';
  * @param {SlashCommand[]} newCommands The commands to sync
  */
 const syncGlobalCommands = async (application: ClientApplication, newCommands: SlashCommand[]): Promise<void> => {
-  logVerbose('Syncing global commands', application.client);
+  application.client.logMethod('Syncing global commands', 'verbose');
   const currentCommands = await application.commands.fetch();
   const cc = [...currentCommands.values()];
 
@@ -21,21 +20,20 @@ const syncGlobalCommands = async (application: ClientApplication, newCommands: S
 
     // command is new
     if (!matching) {
-      logVerbose(`Syncing new global command: ${command.name}`, application.client);
+      application.client.logMethod(`Syncing new global command: ${command.name}`, 'verbose');
       await application.commands.create(command);
-      logVerbose(`    ✅ ${command.name}`, application.client);
       continue;
     }
 
     // command has changed
     if (!deepEqual(matching, toApplicationCommand(command))) {
-      logVerbose(`Syncing changed global command: ${command.name}`, application.client);
+      application.client.logMethod(`Syncing changed global command: ${command.name}`, 'verbose');
       await application.commands.edit(matching.id, command);
     }
 
     // finally, remove from synced commands
     cc.splice(cc.indexOf(matching), 1);
-    logVerbose(`    ✅ ${command.name}`, application.client);
+    application.client.logMethod(`    ✅ ${command.name}`, 'verbose');
   }
 
   // delete left over commands
@@ -77,12 +75,12 @@ export const syncCommands = async (client: Client): Promise<void> => {
   if (global) await syncGlobalCommands(application, global);
 
   // sync guild commands
-  logVerbose(`Syncing guild commands`, client);
+  application.client.logMethod(`Syncing guild commands`, 'verbose');
   const guilds = await client.guilds.fetch();
   for (const [, g] of guilds) {
     const guild = await g.fetch();
     await syncGuildCommands(guild);
   }
 
-  logVerbose('Successfully synced commands', client);
+  application.client.logMethod('Successfully synced commands', 'verbose');
 };
