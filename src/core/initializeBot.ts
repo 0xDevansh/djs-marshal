@@ -3,13 +3,13 @@ import { MarshalOptions } from '../structures/MarshalOptions';
 import { handleInteraction } from './handlers/handleInteraction';
 import { loadCommandsFromDir } from './commands/loadCommandsFromDir';
 import { handleGuildJoin } from './handlers/handleGuildJoin';
-import { handleGuildMemberUpdate } from './handlers/handleGuildMemberUpdate';
 import { loadButtonsFromDir } from './buttons/loadButtonsFromDir';
 import { loadSelectMenusFromDir } from './selectMenus/loadSelectMenusFromDir';
 import { SlashCommand } from '../structures/SlashCommand';
 import { ButtonCommand } from '../structures/ButtonCommand';
 import { SelectMenuCommand } from '../structures/SelectMenuCommand';
 import { syncGuildCommands } from './commands/syncCommands';
+import chalk from 'chalk';
 
 /**
  * Create and set up a bot for slash commands
@@ -22,11 +22,24 @@ export const initializeBot = (options: MarshalOptions): Client => {
   const client = new Client(options);
 
   // logging stuff
-  client.logLevel = options.logLevel || 'warn';
-  client.logStyle = options.logStyle || 'simple';
-  client.logMethod = options.logMethod;
-
-  client.commands = new Collection<Snowflake | 'global' | 'allGuild', Array<SlashCommand>>();
+  (client.logMethod =
+    options.logMethod ||
+    function (message, level): void {
+      let header = 'djs-marshal';
+      switch (level) {
+        case 'verbose':
+          header = chalk.bgGray(header);
+          break;
+        case 'warn':
+          header = chalk.bgYellow(header);
+          break;
+        case 'erroronly':
+          header = chalk.bgRed(header);
+          break;
+      }
+      console.log(`${header} ${message}`);
+    }),
+    (client.commands = new Collection<Snowflake | 'global' | 'allGuild', Array<SlashCommand>>());
   client.buttons = new Collection<string | RegExp, ButtonCommand>();
   client.selectMenus = new Collection<string | RegExp, SelectMenuCommand>();
 
@@ -34,7 +47,6 @@ export const initializeBot = (options: MarshalOptions): Client => {
   client.on('interactionCreate', handleInteraction);
 
   client.on('guildCreate', handleGuildJoin);
-  client.on('guildMemberUpdate', handleGuildMemberUpdate);
 
   client.on('ready', () => {
     // load commands, buttons and select menus

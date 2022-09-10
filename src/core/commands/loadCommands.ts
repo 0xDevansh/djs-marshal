@@ -1,7 +1,6 @@
 import { SlashCommand } from '../../structures/SlashCommand';
-import { Client, Collection, Snowflake } from 'discord.js';
+import { Client, Collection, Snowflake, ApplicationCommandType } from 'discord.js';
 import { syncCommands } from './syncCommands';
-import { logWarning, logVerbose, logError } from '../../utils/logger';
 
 /**
  * Loads slash commands and stores them as client.commands, then syncs them with Discord
@@ -15,18 +14,14 @@ export const loadCommands = async (client: Client, commands: SlashCommand[]): Pr
   commandsCollection.set('global', []);
   commandsCollection.set('allGuild', []);
 
-  logVerbose('Loading commands', client);
+  client.logMethod('Loading commands', 'verbose');
   commands.forEach((command) => {
     // preload checks
     if (command.beforeExecute?.defer && command.beforeExecute?.deferEphemeral)
-      logWarning(`defer and deferEphemeral are both true for command ${command.name}`, client);
-    if ('allowWithPermission' in command && command.allowWithPermission === [])
-      logWarning(`allowWithPermission is [] for ${command.name}, it will be ignored`, client);
+      client.logMethod(`defer and deferEphemeral are both true for command ${command.name}`, 'erroronly');
 
-    if (!command.type) command.type = 'CHAT_INPUT';
-    if (!command.defaultPermission) command.defaultPermission = true;
+    if (!command.type) command.type = ApplicationCommandType.ChatInput;
     if (command.handleError === undefined) command.handleError = true;
-    if ('allowWithPermission' in command) command.defaultPermission = !command.allowWithPermission?.length;
 
     // is guild command
     if (command.commandType === 'guild' && command.guildId) {
@@ -38,11 +33,9 @@ export const loadCommands = async (client: Client, commands: SlashCommand[]): Pr
     } else {
       commandsCollection.get('global')?.push(command);
     }
-
-    logVerbose(`    ✅ ${command.name}`, client);
   });
 
   client.commands = commandsCollection;
-  logVerbose('Loaded all commands', client);
-  await syncCommands(client).catch((err) => logError(err, client));
+  client.logMethod('Loaded all commands', 'verbose');
+  await syncCommands(client).catch((err) => client.logMethod(err, 'erroronly'));
 };

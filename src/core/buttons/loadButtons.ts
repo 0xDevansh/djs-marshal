@@ -1,6 +1,5 @@
 import { ButtonCommand } from '../../structures/ButtonCommand';
 import { Client, Collection } from 'discord.js';
-import { logVerbose, logWarning } from '../../utils/logger';
 
 /**
  * Loads the buttons provided into client.buttons
@@ -9,21 +8,23 @@ import { logVerbose, logWarning } from '../../utils/logger';
  * @param {ButtonCommand[]} buttons The buttons to load
  */
 export const loadButtons = (client: Client, buttons: ButtonCommand[]): void => {
-  logVerbose('Loading buttons', client);
+  client.logMethod('Loading buttons', 'verbose');
   const buttonCollection = new Collection<string | RegExp, ButtonCommand>();
 
   buttons.forEach((button) => {
     // checks
     if (button.beforeExecute?.deferReplyEphemeral && button.beforeExecute?.deferReply) {
-      logWarning(`deferReply and deferReplyEphemeral are both set to true for button ${button.customId}`, client);
+      client.logMethod(
+        `deferReply and deferReplyEphemeral are both set to true for button ${button.customId}`,
+        'erroronly',
+      );
     }
     const defer = button.beforeExecute?.deferReplyEphemeral || button.beforeExecute?.deferReply;
     if (defer && button.beforeExecute?.deferUpdate) {
-      logWarning(`deferReply and deferUpdate are both set to true for button ${button.customId}`, client);
+      client.logMethod(`deferReply and deferUpdate are both set to true for button ${button.customId}`, 'erroronly');
     }
 
     buttonCollection.set(button.customId, button);
-    logVerbose(`    ✅ ${button.customId}`, client);
   });
 
   client.buttons = buttonCollection;

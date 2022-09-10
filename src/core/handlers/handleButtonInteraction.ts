@@ -1,5 +1,4 @@
 import { ButtonInteraction } from 'discord.js';
-import { logWarning } from '../../utils/logger';
 
 /**
  * Intercepts a ButtonInteraction and executes the matching button
@@ -12,9 +11,9 @@ export const handleButtonInteraction = async (int: ButtonInteraction): Promise<v
   });
 
   if (!button)
-    return logWarning(
+    return int.client.logMethod(
       `Received Button interaction with customId: ${int.customId}, but no such registered button`,
-      int.client,
+      'warn',
     );
 
   // beforeExecute stuff

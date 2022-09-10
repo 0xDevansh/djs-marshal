@@ -1,5 +1,4 @@
 import { SelectMenuInteraction } from 'discord.js';
-import { logWarning } from '../../utils/logger';
 
 /**
  * Intercepts a SelectMenuInteraction and executes matching menu
@@ -12,9 +11,9 @@ export const handleSelectMenuInteraction = async (int: SelectMenuInteraction): P
   });
 
   if (!selectMenu)
-    return logWarning(
+    return int.client.logMethod(
       `Received SelectMenu interaction with customId: ${int.customId}, but no such registered menu`,
-      int.client,
+      'warn',
     );
 
   // beforeExecute stuff
