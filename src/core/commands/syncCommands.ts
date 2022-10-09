@@ -84,3 +84,19 @@ export const syncCommands = async (client: Client): Promise<void> => {
 
   application.client.logMethod('Successfully synced commands', 'verbose');
 };
+
+/**
+ * Force-syncs all global slash commands
+ *
+ * @param {Client} client The bot's client
+ */
+export const syncAllGlobalCommands = async (client: Client): Promise<void> => {
+  const application = client.application?.partial ? await client.application?.fetch() : client.application;
+  if (!application) throw new Error('Client application not found');
+
+  // sync global commands
+  const global = client.commands.get('global');
+  if (global) {
+    await application.commands.set(global);
+  }
+};
