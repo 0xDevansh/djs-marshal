@@ -5,6 +5,8 @@
 [![downloads](https://img.shields.io/npm/dm/djs-marshal?style=for-the-badge)](https://www.npmjs.com/package/djs-marshal)
 [![discord](https://img.shields.io/discord/873232757508157470?color=5865F2&label=discord&style=for-the-badge)](https://discord.gg/qJnrRvt7wW)
 
+### ⚠️ Unmaintained, not recommended to be used anymore
+
 A lightweight command handler for discord.js interactions
 
 > This package requires discord.js v13 or higher to be installed
